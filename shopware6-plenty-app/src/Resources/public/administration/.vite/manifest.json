@@ -1,0 +1,8 @@
+{
+  "main.js": {
+    "file": "assets/plenty-connector-plugin-BIK9uGDa.js",
+    "name": "plenty-connector-plugin",
+    "src": "main.js",
+    "isEntry": true
+  }
+}

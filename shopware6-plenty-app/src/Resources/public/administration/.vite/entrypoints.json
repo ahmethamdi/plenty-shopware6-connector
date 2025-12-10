@@ -1,0 +1,23 @@
+{
+  "base": "/bundles/plentyconnectorplugin/administration/",
+  "entryPoints": {
+    "plenty-connector-plugin": {
+      "css": [],
+      "dynamic": [],
+      "js": [
+        "/bundles/plentyconnectorplugin/administration/assets/plenty-connector-plugin-BIK9uGDa.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}
