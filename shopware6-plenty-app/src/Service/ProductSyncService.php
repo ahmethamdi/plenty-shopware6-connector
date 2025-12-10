@@ -303,12 +303,15 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            // persistFileToMedia signature: (MediaFile, destination filename, mediaId, context)
+            // persistFileToMedia signature: (MediaFile $mediaFile, string $destination, string $mediaId, Context $context, ?string $fileName = null, bool $strictExtension = true)
+            // destination: "product", fileName: unique file name we built above
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                $uniqueFileName,
+                'product',
                 $mediaId,
-                $context
+                $context,
+                $uniqueFileName,
+                false
             );
 
             $this->logger->info("Görsel başarıyla kaydedildi: mediaId={$mediaId}, url={$url}");
