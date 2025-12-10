@@ -72,7 +72,7 @@ class OrderSyncService
 
     private function formatOrderForPlenty(OrderEntity $order): array
     {
-        $mandantId = $this->config->get('PlentyConnector.config.mandantId');
+        $mandantId = $this->config->get('PlentyConnectorPlugin.config.mandantId');
 
         return [
             'mandantId' => $mandantId,

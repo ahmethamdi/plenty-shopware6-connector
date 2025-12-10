@@ -35,8 +35,8 @@ class PlentyApiService
             return;
         }
 
-        $username = $this->config->get('PlentyConnector.config.username');
-        $password = $this->config->get('PlentyConnector.config.password');
+        $username = $this->config->get('PlentyConnectorPlugin.config.username');
+        $password = $this->config->get('PlentyConnectorPlugin.config.password');
 
         if (!$username || !$password) {
             throw new \RuntimeException('Plentymarkets kullanıcı adı veya şifre eksik (Plugin ayarlarını kontrol edin).');
@@ -128,7 +128,7 @@ class PlentyApiService
 
     private function getBaseUrl(): string
     {
-        $configured = $this->config->get('PlentyConnector.config.baseUrl') ?: 'https://p57085.my.plentysystems.com/rest';
+        $configured = $this->config->get('PlentyConnectorPlugin.config.baseUrl') ?: 'https://p57085.my.plentysystems.com/rest';
         return rtrim($configured, '/');
     }
 

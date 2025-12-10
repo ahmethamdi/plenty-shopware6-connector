@@ -43,7 +43,7 @@ class ProductSyncService
         }
 
         $page = 0;
-        $itemsPerPage = (int)($this->config->get('PlentyConnector.config.itemsPerPage') ?? 100);
+        $itemsPerPage = (int)($this->config->get('PlentyConnectorPlugin.config.itemsPerPage') ?? 100);
 
         do {
             $response = $this->plentyApiService->getProducts($page, $itemsPerPage);
