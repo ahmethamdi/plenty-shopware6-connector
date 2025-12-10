@@ -244,8 +244,8 @@ class ProductSyncService
 
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                $fileName,
                 'product',
+                $fileName,
                 $context,
                 $mediaId
             );
