@@ -80,7 +80,12 @@ class ProductSyncService
             $variation = $plentyProduct['variations'][0] ?? [];
             $productNumber = $variation['number'] ?? ('plenty-' . ($plentyProduct['id'] ?? uniqid()));
 
-            $priceGross = $this->extractPriceGross($variation);
+            $salesPrices = [];
+            if (!empty($variation['id'])) {
+                $salesPrices = $this->plentyApiService->getVariationSalesPrices((string)$variation['id']);
+            }
+
+            $priceGross = $this->extractPriceGross($variation, $salesPrices);
             if ($priceGross === null) {
                 $this->logger->warning('Fiyat bulunamadı, ürün atlandı: ' . $productNumber);
                 return;
@@ -154,8 +159,12 @@ class ProductSyncService
         return $result ? $result->getId() : null;
     }
 
-    private function extractPriceGross(array $variation): ?float
+    private function extractPriceGross(array $variation, array $salesPrices = []): ?float
     {
+        if (!empty($salesPrices) && isset($salesPrices[0]['price']) && $salesPrices[0]['price'] !== null) {
+            return (float)$salesPrices[0]['price'];
+        }
+
         $prices = $variation['prices'] ?? [];
         if (isset($prices[0]['price']) && $prices[0]['price'] !== null) {
             return (float)$prices[0]['price'];

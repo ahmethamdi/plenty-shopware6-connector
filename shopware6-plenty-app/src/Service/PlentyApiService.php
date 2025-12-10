@@ -111,6 +111,32 @@ class PlentyApiService
         }
     }
 
+    public function getVariationSalesPrices(string $variationId): array
+    {
+        $this->ensureAuthenticated();
+
+        try {
+            $response = $this->httpClient->request('GET', $this->getBaseUrl() . '/items/variations/' . $variationId . '/salesprices', [
+                'headers' => $this->getAuthHeaders(),
+            ]);
+
+            if ($response->getStatusCode() >= 400) {
+                $body = $response->getContent(false);
+                $this->logger->warning('Plenty sales price çağrısı başarısız', [
+                    'status' => $response->getStatusCode(),
+                    'body' => $body,
+                    'variation' => $variationId,
+                ]);
+                return [];
+            }
+
+            return $response->toArray(false);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Plenty sales price çağrısı hata', ['msg' => $e->getMessage(), 'variation' => $variationId]);
+            return [];
+        }
+    }
+
     public function createOrder(array $orderData): array
     {
         $this->ensureAuthenticated();
@@ -135,7 +161,7 @@ class PlentyApiService
         }
     }
 
-    private function getBaseUrl(): string
+    public function getBaseUrl(): string
     {
         $configured = $this->config->get('PlentyConnectorPlugin.config.baseUrl') ?: 'https://p57085.my.plentysystems.com/rest';
         return rtrim($configured, '/');
