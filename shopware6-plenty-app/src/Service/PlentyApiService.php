@@ -75,7 +75,7 @@ class PlentyApiService
                 'query' => [
                     'page' => $page,
                     'itemsPerPage' => $itemsPerPage,
-                    'with' => 'variations,texts',
+                    'with' => 'variations.stock,texts',
                 ]
             ]);
 
@@ -104,9 +104,27 @@ class PlentyApiService
                 'headers' => $this->getAuthHeaders(),
             ]);
 
-            return json_decode($response->getContent(), true);
+            if ($response->getStatusCode() >= 400) {
+                $this->logger->error('Plenty image API çağrısı başarısız', [
+                    'status' => $response->getStatusCode(),
+                    'itemId' => $itemId,
+                    'body' => $response->getContent(false),
+                ]);
+                return [];
+            }
+
+            $data = json_decode($response->getContent(), true);
+            $this->logger->debug("Plenty image API response: itemId={$itemId}", [
+                'response_keys' => array_keys($data ?? []),
+                'entries_count' => isset($data['entries']) && is_array($data['entries']) ? count($data['entries']) : 0
+            ]);
+
+            return $data;
         } catch (\Exception $e) {
-            $this->logger->error('Ürün görselleri çekilemedi: ' . $e->getMessage());
+            $this->logger->error('Ürün görselleri çekilemedi: ' . $e->getMessage(), [
+                'itemId' => $itemId,
+                'exception' => get_class($e)
+            ]);
             return [];
         }
     }

@@ -195,50 +195,92 @@ class ProductSyncService
 
     private function resolveStock(array $variation): int
     {
+        $variationId = $variation['id'] ?? 'unknown';
+
+        // İlk olarak variation datasında stok var mı kontrol et
         if (!empty($variation['stock']) || !empty($variation['stockNet'])) {
-            return (int)($variation['stock'] ?? $variation['stockNet'] ?? 0);
+            $stockValue = (int)($variation['stock'] ?? $variation['stockNet'] ?? 0);
+            $this->logger->info("Stok variation datasından alındı: variationId={$variationId}, stock={$stockValue}");
+            return $stockValue;
         }
 
-        if (!empty($variation['id'])) {
-            $stock = $this->plentyApiService->getVariationStock((string)$variation['id']);
-            if ($stock !== null) {
-                return (int)$stock;
+        // variation.variationStock yapısını kontrol et
+        if (!empty($variation['variationStock'])) {
+            if (is_array($variation['variationStock'])) {
+                $stockValue = (int)($variation['variationStock']['stockNet'] ?? $variation['variationStock']['stockPhysical'] ?? 0);
+                $this->logger->info("Stok variationStock datasından alındı: variationId={$variationId}, stock={$stockValue}");
+                return $stockValue;
             }
         }
 
+        // Eğer variation datasında stok yoksa, ayrı API çağrısı yap
+        if (!empty($variation['id'])) {
+            $this->logger->info("Stok için ayrı API çağrısı yapılıyor: variationId={$variationId}");
+            $stock = $this->plentyApiService->getVariationStock((string)$variation['id']);
+            if ($stock !== null) {
+                $this->logger->info("Stok API'den alındı: variationId={$variationId}, stock=" . (int)$stock);
+                return (int)$stock;
+            } else {
+                $this->logger->warning("Stok API çağrısı null döndü: variationId={$variationId}");
+            }
+        }
+
+        $this->logger->warning("Stok bulunamadı, varsayılan 0 kullanılıyor: variationId={$variationId}", [
+            'available_keys' => array_keys($variation)
+        ]);
         return 0;
     }
 
     private function importFirstImageAsMedia(?string $itemId, Context $context): ?string
     {
         if (!$itemId) {
+            $this->logger->debug('Görsel import atlandı: itemId yok');
             return null;
         }
 
+        $this->logger->info("Ürün görselleri getiriliyor: itemId={$itemId}");
         $images = $this->plentyApiService->getProductImages($itemId);
         $entries = $images['entries'] ?? $images ?? [];
+
         if (empty($entries) || !is_array($entries)) {
+            $this->logger->warning("Ürün için görsel bulunamadı: itemId={$itemId}", [
+                'response_structure' => array_keys($images),
+                'entries_count' => is_array($entries) ? count($entries) : 0
+            ]);
             return null;
         }
 
+        $this->logger->info("Ürün için " . count($entries) . " görsel bulundu: itemId={$itemId}");
         $first = reset($entries);
         $url = $this->resolveImageUrl($first);
+
         if (!$url) {
+            $this->logger->warning("Görsel URL'i çözümlenemedi: itemId={$itemId}", [
+                'image_data_keys' => array_keys($first)
+            ]);
             return null;
         }
 
+        $this->logger->info("Görsel indiriliyor: {$url}");
         $mediaId = Uuid::randomHex();
         $this->mediaRepository->create([['id' => $mediaId]], $context);
 
         try {
             $fileName = basename(parse_url($url, PHP_URL_PATH)) ?: Uuid::randomHex();
-            $binary = @file_get_contents($url);
+
+            // Error suppression kaldırıldı - gerçek hataları göreceğiz
+            $binary = file_get_contents($url);
+
             if ($binary === false) {
+                $error = error_get_last();
+                $this->logger->error("Görsel indirilemedi: {$url}", [
+                    'error' => $error['message'] ?? 'Bilinmeyen hata',
+                    'itemId' => $itemId
+                ]);
                 return null;
             }
 
             $pathInfo = pathinfo($fileName);
-            $baseName = $pathInfo['filename'] ?? Uuid::randomHex();
             $extension = $pathInfo['extension'] ?? 'jpg';
 
             $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -247,6 +289,8 @@ class ProductSyncService
             $tmpFile = tempnam(sys_get_temp_dir(), 'plenty_img_');
             file_put_contents($tmpFile, $binary);
 
+            $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, size=" . filesize($tmpFile) . " bytes");
+
             $mediaFile = new MediaFile(
                 $tmpFile,
                 $mimeType,
@@ -254,18 +298,31 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
+            // Her ürün için benzersiz bir dosya ismi oluştur
+            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid();
+
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
                 'product',
                 $mediaId,
                 $context,
-                $baseName,
+                $uniqueFileName,
                 false
             );
 
+            $this->logger->info("Görsel başarıyla kaydedildi: mediaId={$mediaId}, url={$url}");
+
+            // Temp dosyayı temizle
+            @unlink($tmpFile);
+
             return $mediaId;
         } catch (\Throwable $e) {
-            $this->logger->warning('Görsel içe alırken hata: ' . $e->getMessage());
+            $this->logger->error('Görsel içe alırken hata: ' . $e->getMessage(), [
+                'itemId' => $itemId,
+                'url' => $url ?? 'N/A',
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }
