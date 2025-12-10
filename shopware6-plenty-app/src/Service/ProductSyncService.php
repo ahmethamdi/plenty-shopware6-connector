@@ -69,7 +69,11 @@ class ProductSyncService
             $name = $plentyProduct['texts'][0]['name'] ?? 'Ürün';
             $description = $plentyProduct['texts'][0]['description'] ?? '';
 
-            $priceGross = (float)($plentyProduct['variations'][0]['prices'][0]['price'] ?? 0);
+            $priceGross = $this->extractPriceGross($plentyProduct);
+            if ($priceGross === null) {
+                $this->logger->warning('Fiyat bulunamadı, ürün atlandı: ' . $productNumber);
+                return;
+            }
             $priceNet = $priceGross > 0 ? $priceGross / 1.19 : 0;
             $stock = (int)($plentyProduct['variations'][0]['stock'] ?? 0);
 
@@ -125,5 +129,15 @@ class ProductSyncService
         $criteria = (new Criteria())->setLimit(1);
         $result = $this->taxRepository->search($criteria, $context)->first();
         return $result ? $result->getId() : null;
+    }
+
+    private function extractPriceGross(array $plentyProduct): ?float
+    {
+        $prices = $plentyProduct['variations'][0]['prices'] ?? [];
+        if (isset($prices[0]['price']) && $prices[0]['price'] !== null) {
+            return (float)$prices[0]['price'];
+        }
+
+        return null;
     }
 }
