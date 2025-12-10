@@ -75,7 +75,7 @@ class PlentyApiService
                 'query' => [
                     'page' => $page,
                     'itemsPerPage' => $itemsPerPage,
-                    'with' => 'variations,images,texts',
+                    'with' => 'variations,texts',
                 ]
             ]);
 
