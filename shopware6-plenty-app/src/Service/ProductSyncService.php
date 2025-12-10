@@ -230,24 +230,14 @@ class ProductSyncService
 
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
-            $extension = pathinfo($fileName, PATHINFO_EXTENSION) ?: null;
 
-            $tmpFile = tempnam(sys_get_temp_dir(), 'plenty_img_');
-            file_put_contents($tmpFile, $binary);
-
-            $mediaFile = new MediaFile(
-                $tmpFile,
+            $this->mediaService->saveFile(
+                $binary,
+                $fileName,
                 $mimeType,
-                $extension ?: 'bin',
-                filesize($tmpFile)
-            );
-
-            $this->fileSaver->persistFileToMedia(
-                $mediaFile,
-                $mediaId,
-                'product',
                 $context,
-                $fileName
+                'product',
+                $mediaId
             );
 
             return $mediaId;
