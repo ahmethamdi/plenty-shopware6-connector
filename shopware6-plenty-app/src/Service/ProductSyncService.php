@@ -303,13 +303,14 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            // persistFileToMedia signature: (MediaFile $mediaFile, string $destination, string $fileName, string $mediaId, Context $context, ?string $path = null, bool $strictExtension = true)
+            // persistFileToMedia signature in this Shopware version:
+            // (MediaFile $mediaFile, string $destination, string $fileName, Context $context, string $mediaId = null, ?string $path = null, bool $strictExtension = true)
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
                 'product',
                 $uniqueFileName,
-                $mediaId,
                 $context,
+                $mediaId,
                 null,
                 false
             );
