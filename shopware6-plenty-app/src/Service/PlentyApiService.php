@@ -141,17 +141,29 @@ class PlentyApiService
             ]);
 
             if ($response->getStatusCode() >= 400) {
+                // 404 is normal for first endpoint, try fallback
+                if ($response->getStatusCode() !== 404) {
+                    $this->logger->debug('Plenty variation detail çağrısı başarısız, fallback deneniyor', [
+                        'status' => $response->getStatusCode(),
+                        'variation' => $variationId,
+                    ]);
+                }
+
                 // fallback to legacy nested endpoint
                 $fallback = $this->httpClient->request('GET', $this->getBaseUrl() . '/items/variations/' . $variationId . '/salesprices', [
                     'headers' => $this->getAuthHeaders(),
                 ]);
                 if ($fallback->getStatusCode() >= 400) {
-                    $body = $fallback->getContent(false);
-                    $this->logger->warning('Plenty sales price çağrısı başarısız', [
-                        'status' => $fallback->getStatusCode(),
-                        'body' => $body,
-                        'variation' => $variationId,
-                    ]);
+                    // 404 is normal - not all variations have sales prices, just use fallback price
+                    // Only log if it's a real error (not 404)
+                    if ($fallback->getStatusCode() !== 404) {
+                        $body = $fallback->getContent(false);
+                        $this->logger->warning('Plenty sales price çağrısı başarısız', [
+                            'status' => $fallback->getStatusCode(),
+                            'body' => $body,
+                            'variation' => $variationId,
+                        ]);
+                    }
                     return [];
                 }
 
@@ -166,7 +178,10 @@ class PlentyApiService
             // If not embedded, try legacy structure
             return $data;
         } catch (\Throwable $e) {
-            $this->logger->warning('Plenty sales price çağrısı hata', ['msg' => $e->getMessage(), 'variation' => $variationId]);
+            // Only log real errors, not 404s
+            if (!str_contains($e->getMessage(), '404')) {
+                $this->logger->warning('Plenty sales price çağrısı hata', ['msg' => $e->getMessage(), 'variation' => $variationId]);
+            }
             return [];
         }
     }
