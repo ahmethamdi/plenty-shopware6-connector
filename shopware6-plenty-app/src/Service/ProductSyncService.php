@@ -289,8 +289,8 @@ class ProductSyncService
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
 
-            // Her ürün için benzersiz bir filename oluştur (extension ile birlikte)
-            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid() . '.' . $extension;
+            // Her görsel için benzersiz bir filename (mediaId + extension)
+            $uniqueFileName = $mediaId . '.' . $extension;
             $tmpFile = sys_get_temp_dir() . '/' . $uniqueFileName;
             file_put_contents($tmpFile, $binary);
 
