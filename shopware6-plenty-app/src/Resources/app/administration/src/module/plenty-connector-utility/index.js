@@ -20,11 +20,12 @@ Module.register('plenty-connector-utility', {
         },
     },
 
-    navigation: [{
-        label: 'Plentymarkets Tools',
-        color: '#0e71ba',
-        path: 'plenty.connector.utility.index',
-        parent: 'sw-settings',
-        position: 100,
-    }],
+    settingsItem: [
+        {
+            group: 'plugins',
+            to: 'plenty.connector.utility.index',
+            icon: 'default-object-gear',
+            label: 'plenty-connector-utility.general.mainMenuItemGeneral',
+        },
+    ],
 });

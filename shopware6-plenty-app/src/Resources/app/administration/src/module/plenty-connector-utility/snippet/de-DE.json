@@ -1,0 +1,21 @@
+{
+  "plenty-connector-utility": {
+    "general": {
+      "headline": "Plentymarkets Werkzeuge",
+      "mainMenuItemGeneral": "Plentymarkets Werkzeuge"
+    },
+    "cards": {
+      "actions": "Aktionen"
+    },
+    "buttons": {
+      "clearCache": "Cache leeren",
+      "syncProducts": "Produkte synchronisieren"
+    },
+    "messages": {
+      "cacheCleared": "Cache geleert",
+      "cacheFailed": "Cache-Leerung fehlgeschlagen",
+      "syncTriggered": "Produktsync gestartet",
+      "syncFailed": "Produktsync fehlgeschlagen"
+    }
+  }
+}
