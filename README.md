@@ -1,0 +1,1 @@
+# plenty-shopware6-connector
