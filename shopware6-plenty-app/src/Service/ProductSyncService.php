@@ -256,10 +256,11 @@ class ProductSyncService
 
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                $mediaId,
-                $baseName,
                 'product',
-                $context
+                $mediaId,
+                $context,
+                $baseName,
+                false
             );
 
             return $mediaId;
