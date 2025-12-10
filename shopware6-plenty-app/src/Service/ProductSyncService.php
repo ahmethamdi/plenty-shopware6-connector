@@ -289,9 +289,9 @@ class ProductSyncService
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
 
-            // Her görsel için benzersiz bir filename (mediaId + extension)
-            $uniqueFileName = $mediaId . '.' . $extension;
-            $tmpFile = sys_get_temp_dir() . '/' . $uniqueFileName;
+            // Her görsel için benzersiz bir filename
+            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid();
+            $tmpFile = sys_get_temp_dir() . '/' . $uniqueFileName . '.' . $extension;
             file_put_contents($tmpFile, $binary);
 
             $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, file={$uniqueFileName}, size=" . filesize($tmpFile) . " bytes");
@@ -303,16 +303,12 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            // persistFileToMedia signature in this Shopware version:
-            // (MediaFile $mediaFile, string $destination, string $fileName, Context $context, string $mediaId = null, ?string $path = null, bool $strictExtension = true)
+            // persistFileToMedia: destination folder, then filename (without extension)
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                'product',
                 $uniqueFileName,
-                $context,
                 $mediaId,
-                null,
-                false
+                $context
             );
 
             $this->logger->info("Görsel başarıyla kaydedildi: mediaId={$mediaId}, url={$url}");
