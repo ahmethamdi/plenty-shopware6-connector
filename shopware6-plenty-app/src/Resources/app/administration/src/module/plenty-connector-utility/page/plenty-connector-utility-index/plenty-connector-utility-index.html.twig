@@ -1,0 +1,28 @@
+<sw-page class="plenty-utility-page">
+    <template #smart-bar-header>
+        <h2>{{ $tc('plenty-connector-utility.general.headline') }}</h2>
+    </template>
+
+    <template #content>
+        <div class="plenty-utility-card">
+            <sw-card :title="$tc('plenty-connector-utility.cards.actions')">
+                <div class="plenty-utility-actions">
+                    <sw-button :loading="isClearing"
+                               variant="primary"
+                               @click="clearCache">
+                        {{ $tc('plenty-connector-utility.buttons.clearCache') }}
+                    </sw-button>
+
+                    <sw-button :loading="isSyncing"
+                               variant="ghost"
+                               @click="syncProducts">
+                        {{ $tc('plenty-connector-utility.buttons.syncProducts') }}
+                    </sw-button>
+                </div>
+                <div v-if="lastMessage" class="plenty-utility-message">
+                    {{ lastMessage }}
+                </div>
+            </sw-card>
+        </div>
+    </template>
+</sw-page>

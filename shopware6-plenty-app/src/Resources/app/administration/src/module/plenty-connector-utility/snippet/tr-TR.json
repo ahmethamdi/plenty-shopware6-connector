@@ -1,0 +1,21 @@
+{
+  "plenty-connector-utility": {
+    "general": {
+      "headline": "Plentymarkets Araçları",
+      "mainMenuItemGeneral": "Plentymarkets Araçları"
+    },
+    "cards": {
+      "actions": "Aksiyonlar"
+    },
+    "buttons": {
+      "clearCache": "Cache temizle",
+      "syncProducts": "Ürünleri senkronize et"
+    },
+    "messages": {
+      "cacheCleared": "Cache temizlendi",
+      "cacheFailed": "Cache temizlenemedi",
+      "syncTriggered": "Ürün senkronu tetiklendi",
+      "syncFailed": "Ürün senkronu başarısız"
+    }
+  }
+}
