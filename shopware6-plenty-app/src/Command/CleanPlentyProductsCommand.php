@@ -43,10 +43,11 @@ class CleanPlentyProductsCommand extends Command
 
         $output->writeln('<info>Plenty ürünleri temizleniyor...</info>');
 
-        // Tüm ürünleri toplu sil (sayfalayarak)
+        // Sadece Plenty ürünlerini sil (productNumber "plenty-" ile başlayanlar)
         $productDeleted = 0;
         do {
             $criteria = (new Criteria())->setLimit(500);
+            $criteria->addFilter(new PrefixFilter('productNumber', 'plenty-'));
             $products = $this->productRepository->search($criteria, $context);
             $batch = $products->count();
 
@@ -57,16 +58,17 @@ class CleanPlentyProductsCommand extends Command
                 }
                 $this->productRepository->delete($deleteIds, $context);
                 $productDeleted += $batch;
-                $output->writeln("<info>$batch ürün silindi (toplam $productDeleted).</info>");
+                $output->writeln("<info>$batch Plenty ürünü silindi (toplam $productDeleted).</info>");
             }
         } while ($batch > 0);
 
-        $this->logger->info("$productDeleted adet ürün silindi");
+        $this->logger->info("$productDeleted adet Plenty ürünü silindi");
 
-        // Tüm medya dosyalarını toplu sil (sayfalayarak)
+        // Sadece Plenty görsellerini sil (fileName "plenty_" ile başlayanlar)
         $mediaDeleted = 0;
         do {
             $mediaCriteria = (new Criteria())->setLimit(500);
+            $mediaCriteria->addFilter(new PrefixFilter('fileName', 'plenty_'));
             $mediaFiles = $this->mediaRepository->search($mediaCriteria, $context);
             $mediaBatch = $mediaFiles->count();
 
@@ -77,11 +79,11 @@ class CleanPlentyProductsCommand extends Command
                 }
                 $this->mediaRepository->delete($deleteMediaIds, $context);
                 $mediaDeleted += $mediaBatch;
-                $output->writeln("<info>$mediaBatch adet media silindi (toplam $mediaDeleted).</info>");
+                $output->writeln("<info>$mediaBatch adet Plenty media silindi (toplam $mediaDeleted).</info>");
             }
         } while ($mediaBatch > 0);
 
-        $this->logger->info("$mediaDeleted adet media kaydı silindi");
+        $this->logger->info("$mediaDeleted adet Plenty media kaydı silindi");
 
         $output->writeln('<info>Temizlik tamamlandı!</info>');
 
