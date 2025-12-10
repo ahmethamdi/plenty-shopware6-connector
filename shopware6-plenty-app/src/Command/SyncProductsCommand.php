@@ -16,7 +16,7 @@ class SyncProductsCommand extends Command
 
     public function __construct(ProductSyncService $productSyncService)
     {
-        parent::__construct();
+        parent::__construct(self::$defaultName);
         $this->productSyncService = $productSyncService;
     }
 
