@@ -5,6 +5,7 @@ namespace PlentyConnector\Service;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Content\Media\MediaService;
 use Shopware\Core\Content\Media\File\MediaFile;
+use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -20,6 +21,7 @@ class ProductSyncService
     private EntityRepository $taxRepository;
     private EntityRepository $mediaRepository;
     private MediaService $mediaService;
+    private FileSaver $fileSaver;
     private SystemConfigService $config;
     private LoggerInterface $logger;
 
@@ -29,6 +31,7 @@ class ProductSyncService
         EntityRepository $taxRepository,
         EntityRepository $mediaRepository,
         MediaService $mediaService,
+        FileSaver $fileSaver,
         SystemConfigService $config,
         LoggerInterface $logger
     ) {
@@ -37,6 +40,7 @@ class ProductSyncService
         $this->taxRepository = $taxRepository;
         $this->mediaRepository = $mediaRepository;
         $this->mediaService = $mediaService;
+        $this->fileSaver = $fileSaver;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -238,7 +242,7 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            $this->mediaService->saveMediaFile(
+            $this->fileSaver->persistFileToMedia(
                 $mediaFile,
                 $fileName,
                 'product',
