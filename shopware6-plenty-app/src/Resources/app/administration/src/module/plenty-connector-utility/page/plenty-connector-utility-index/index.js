@@ -20,14 +20,8 @@ Component.register('plenty-connector-utility-index', {
             try {
                 await this.$http.post('/api/_action/plenty/cache-clear');
                 this.lastMessage = this.$tc('plenty-connector-utility.messages.cacheCleared');
-                this.createNotificationSuccess({
-                    message: this.$tc('plenty-connector-utility.messages.cacheCleared')
-                });
             } catch (e) {
-                this.lastMessage = this.$tc('plenty-connector-utility.messages.cacheFailed');
-                this.createNotificationError({
-                    message: this.$tc('plenty-connector-utility.messages.cacheFailed')
-                });
+                this.lastMessage = (e?.response?.data?.errors?.[0]?.detail) || this.$tc('plenty-connector-utility.messages.cacheFailed');
             } finally {
                 this.isClearing = false;
             }
@@ -39,14 +33,8 @@ Component.register('plenty-connector-utility-index', {
             try {
                 await this.$http.post('/api/_action/plenty/sync-products');
                 this.lastMessage = this.$tc('plenty-connector-utility.messages.syncTriggered');
-                this.createNotificationSuccess({
-                    message: this.$tc('plenty-connector-utility.messages.syncTriggered')
-                });
             } catch (e) {
-                this.lastMessage = this.$tc('plenty-connector-utility.messages.syncFailed');
-                this.createNotificationError({
-                    message: this.$tc('plenty-connector-utility.messages.syncFailed')
-                });
+                this.lastMessage = (e?.response?.data?.errors?.[0]?.detail) || this.$tc('plenty-connector-utility.messages.syncFailed');
             } finally {
                 this.isSyncing = false;
             }
