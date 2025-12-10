@@ -91,7 +91,7 @@ class ProductSyncService
                 return;
             }
             $priceNet = $priceGross > 0 ? $priceGross / 1.19 : 0;
-            $stock = (int)($variation['stock'] ?? $variation['stockNet'] ?? 0);
+            $stock = $this->resolveStock($variation);
 
             $currencyId = $context->getCurrencyId();
             $taxId = $this->resolveTaxId($context);
@@ -178,6 +178,22 @@ class ProductSyncService
         return null;
     }
 
+    private function resolveStock(array $variation): int
+    {
+        if (!empty($variation['stock']) || !empty($variation['stockNet'])) {
+            return (int)($variation['stock'] ?? $variation['stockNet'] ?? 0);
+        }
+
+        if (!empty($variation['id'])) {
+            $stock = $this->plentyApiService->getVariationStock((string)$variation['id']);
+            if ($stock !== null) {
+                return (int)$stock;
+            }
+        }
+
+        return 0;
+    }
+
     private function importFirstImageAsMedia(?string $itemId, Context $context): ?string
     {
         if (!$itemId) {
@@ -200,8 +216,8 @@ class ProductSyncService
         $this->mediaRepository->create([['id' => $mediaId]], $context);
 
         try {
-            $fileName = basename(parse_url($url, PHP_URL_PATH));
-            $this->mediaService->fetchFile($url, $fileName ?: Uuid::randomHex(), null, $context, $mediaId);
+            $fileName = basename(parse_url($url, PHP_URL_PATH)) ?: Uuid::randomHex();
+            $this->mediaService->saveFileFromUrl($url, $fileName, null, $context, $mediaId);
             return $mediaId;
         } catch (\Throwable $e) {
             $this->logger->warning('Görsel içe alırken hata: ' . $e->getMessage());

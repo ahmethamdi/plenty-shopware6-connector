@@ -137,6 +137,41 @@ class PlentyApiService
         }
     }
 
+    public function getVariationStock(string $variationId): ?float
+    {
+        $this->ensureAuthenticated();
+
+        try {
+            $response = $this->httpClient->request('GET', $this->getBaseUrl() . '/stockmanagement/stock', [
+                'headers' => $this->getAuthHeaders(),
+                'query' => ['variationId' => $variationId],
+            ]);
+
+            if ($response->getStatusCode() >= 400) {
+                $this->logger->warning('Plenty stok çağrısı başarısız', [
+                    'status' => $response->getStatusCode(),
+                    'variation' => $variationId,
+                    'body' => $response->getContent(false),
+                ]);
+                return null;
+            }
+
+            $data = $response->toArray(false);
+            $entries = $data['entries'] ?? $data ?? [];
+            if (is_array($entries) && count($entries) > 0) {
+                $sum = 0;
+                foreach ($entries as $entry) {
+                    $sum += (float)($entry['stockNet'] ?? $entry['stockPhysical'] ?? 0);
+                }
+                return $sum;
+            }
+        } catch (\Throwable $e) {
+            $this->logger->warning('Plenty stok çağrısı hata', ['msg' => $e->getMessage(), 'variation' => $variationId]);
+        }
+
+        return null;
+    }
+
     public function createOrder(array $orderData): array
     {
         $this->ensureAuthenticated();
