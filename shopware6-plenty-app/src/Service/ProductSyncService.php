@@ -77,7 +77,7 @@ class ProductSyncService
             $priceNet = $priceGross > 0 ? $priceGross / 1.19 : 0;
             $stock = (int)($plentyProduct['variations'][0]['stock'] ?? 0);
 
-            $currencyId = 'b7d2554b0ce847cd82f3ac73bd8e50d7'; // Varsayılan EUR
+            $currencyId = $context->getCurrencyId();
             $taxId = $this->resolveTaxId($context);
             if (!$taxId) {
                 $this->logger->warning('Vergi bulunamadı, ürün atlandı: ' . $productNumber);
