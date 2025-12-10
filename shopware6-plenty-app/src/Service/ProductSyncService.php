@@ -3,10 +3,12 @@
 namespace PlentyConnector\Service;
 
 use Psr\Log\LoggerInterface;
+use Shopware\Core\Content\Media\MediaService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class ProductSyncService
@@ -14,6 +16,8 @@ class ProductSyncService
     private PlentyApiService $plentyApiService;
     private EntityRepository $productRepository;
     private EntityRepository $taxRepository;
+    private EntityRepository $mediaRepository;
+    private MediaService $mediaService;
     private SystemConfigService $config;
     private LoggerInterface $logger;
 
@@ -21,12 +25,16 @@ class ProductSyncService
         PlentyApiService $plentyApiService,
         EntityRepository $productRepository,
         EntityRepository $taxRepository,
+        EntityRepository $mediaRepository,
+        MediaService $mediaService,
         SystemConfigService $config,
         LoggerInterface $logger
     ) {
         $this->plentyApiService = $plentyApiService;
         $this->productRepository = $productRepository;
         $this->taxRepository = $taxRepository;
+        $this->mediaRepository = $mediaRepository;
+        $this->mediaService = $mediaService;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -65,17 +73,20 @@ class ProductSyncService
     private function upsertProduct(array $plentyProduct, Context $context): void
     {
         try {
-            $productNumber = 'plenty-' . ($plentyProduct['id'] ?? uniqid());
-            $name = $plentyProduct['texts'][0]['name'] ?? 'Ürün';
-            $description = $plentyProduct['texts'][0]['description'] ?? '';
+            $text = $plentyProduct['texts'][0] ?? [];
+            $name = $text['name1'] ?? $text['name2'] ?? $text['name3'] ?? 'Ürün';
+            $description = $text['description'] ?? $text['shortDescription'] ?? '';
 
-            $priceGross = $this->extractPriceGross($plentyProduct);
+            $variation = $plentyProduct['variations'][0] ?? [];
+            $productNumber = $variation['number'] ?? ('plenty-' . ($plentyProduct['id'] ?? uniqid()));
+
+            $priceGross = $this->extractPriceGross($variation);
             if ($priceGross === null) {
                 $this->logger->warning('Fiyat bulunamadı, ürün atlandı: ' . $productNumber);
                 return;
             }
             $priceNet = $priceGross > 0 ? $priceGross / 1.19 : 0;
-            $stock = (int)($plentyProduct['variations'][0]['stock'] ?? 0);
+            $stock = (int)($variation['stock'] ?? $variation['stockNet'] ?? 0);
 
             $currencyId = $context->getCurrencyId();
             $taxId = $this->resolveTaxId($context);
@@ -85,6 +96,7 @@ class ProductSyncService
             }
 
             $existingId = $this->findProductIdByNumber($productNumber, $context);
+            $coverId = $this->importFirstImageAsMedia($plentyProduct['id'] ?? null, $context);
 
             $payload = [
                 'id' => $existingId,
@@ -103,6 +115,17 @@ class ProductSyncService
                     ],
                 ],
             ];
+
+            if ($coverId) {
+                $payload['coverId'] = $coverId;
+                $payload['media'] = [
+                    [
+                        'id' => Uuid::randomHex(),
+                        'mediaId' => $coverId,
+                        'position' => 1,
+                    ],
+                ];
+            }
 
             $this->productRepository->upsert([$payload], $context);
 
@@ -131,16 +154,66 @@ class ProductSyncService
         return $result ? $result->getId() : null;
     }
 
-    private function extractPriceGross(array $plentyProduct): ?float
+    private function extractPriceGross(array $variation): ?float
     {
-        $prices = $plentyProduct['variations'][0]['prices'] ?? [];
+        $prices = $variation['prices'] ?? [];
         if (isset($prices[0]['price']) && $prices[0]['price'] !== null) {
             return (float)$prices[0]['price'];
         }
 
-        $purchasePrice = $plentyProduct['variations'][0]['purchasePrice'] ?? null;
+        $purchasePrice = $variation['purchasePrice'] ?? null;
         if ($purchasePrice !== null) {
             return (float)$purchasePrice;
+        }
+
+        return null;
+    }
+
+    private function importFirstImageAsMedia(?string $itemId, Context $context): ?string
+    {
+        if (!$itemId) {
+            return null;
+        }
+
+        $images = $this->plentyApiService->getProductImages($itemId);
+        $entries = $images['entries'] ?? $images ?? [];
+        if (empty($entries) || !is_array($entries)) {
+            return null;
+        }
+
+        $first = reset($entries);
+        $url = $this->resolveImageUrl($first);
+        if (!$url) {
+            return null;
+        }
+
+        $mediaId = Uuid::randomHex();
+        $this->mediaRepository->create([['id' => $mediaId]], $context);
+
+        try {
+            $fileName = basename(parse_url($url, PHP_URL_PATH));
+            $this->mediaService->fetchFile($url, $fileName ?: Uuid::randomHex(), null, $context, $mediaId);
+            return $mediaId;
+        } catch (\Throwable $e) {
+            $this->logger->warning('Görsel içe alırken hata: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function resolveImageUrl(array $image): ?string
+    {
+        foreach (['url', 'urlMiddle', 'urlPreview', 'urlSecondPreview'] as $key) {
+            if (!empty($image[$key])) {
+                return $image[$key];
+            }
+        }
+
+        if (!empty($image['path'])) {
+            $path = $image['path'];
+            if (str_starts_with($path, 'http')) {
+                return $path;
+            }
+            return rtrim($this->plentyApiService->getBaseUrl(), '/') . '/' . ltrim($path, '/');
         }
 
         return null;
