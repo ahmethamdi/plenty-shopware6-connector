@@ -138,6 +138,11 @@ class ProductSyncService
             return (float)$prices[0]['price'];
         }
 
+        $purchasePrice = $plentyProduct['variations'][0]['purchasePrice'] ?? null;
+        if ($purchasePrice !== null) {
+            return (float)$purchasePrice;
+        }
+
         return null;
     }
 }
