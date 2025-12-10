@@ -79,6 +79,15 @@ class PlentyApiService
                 ]
             ]);
 
+            if ($response->getStatusCode() >= 400) {
+                $body = $response->getContent(false);
+                $this->logger->error('Plenty ürün çağrısı başarısız', [
+                    'status' => $response->getStatusCode(),
+                    'body' => $body,
+                ]);
+                return [];
+            }
+
             return json_decode($response->getContent(), true);
         } catch (\Exception $e) {
             $this->logger->error('Plentyden ürünler çekilemedi: ' . $e->getMessage());
