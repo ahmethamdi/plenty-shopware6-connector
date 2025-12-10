@@ -17,6 +17,7 @@
     "label": {
       "de-DE": "Plentymarkets Verbindung",
       "en-GB": "Plentymarkets Integration"
-    }
+    },
+    "shopware-administration": "src/Resources/app/administration/src"
   }
 }
