@@ -263,7 +263,10 @@ class ProductSyncService
 
         $this->logger->info("Görsel indiriliyor: {$url}");
         $mediaId = Uuid::randomHex();
-        $this->mediaRepository->create([['id' => $mediaId]], $context);
+
+        $this->mediaRepository->create([[
+            'id' => $mediaId,
+        ]], $context);
 
         try {
             $fileName = basename(parse_url($url, PHP_URL_PATH)) ?: Uuid::randomHex();
@@ -286,10 +289,12 @@ class ProductSyncService
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
 
-            $tmpFile = tempnam(sys_get_temp_dir(), 'plenty_img_');
+            // Her ürün için benzersiz bir filename oluştur (extension ile birlikte)
+            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid() . '.' . $extension;
+            $tmpFile = sys_get_temp_dir() . '/' . $uniqueFileName;
             file_put_contents($tmpFile, $binary);
 
-            $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, size=" . filesize($tmpFile) . " bytes");
+            $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, file={$uniqueFileName}, size=" . filesize($tmpFile) . " bytes");
 
             $mediaFile = new MediaFile(
                 $tmpFile,
@@ -298,16 +303,12 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            // Her ürün için benzersiz bir dosya ismi oluştur
-            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid();
-
+            // persistFileToMedia signature: (MediaFile, destination filename, mediaId, context)
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                'product',
-                $mediaId,
-                $context,
                 $uniqueFileName,
-                false
+                $mediaId,
+                $context
             );
 
             $this->logger->info("Görsel başarıyla kaydedildi: mediaId={$mediaId}, url={$url}");
