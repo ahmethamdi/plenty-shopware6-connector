@@ -4,6 +4,7 @@ namespace PlentyConnector\Service;
 
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Content\Media\MediaService;
+use Shopware\Core\Content\Media\File\MediaFile;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -227,12 +228,21 @@ class ProductSyncService
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
             $extension = pathinfo($fileName, PATHINFO_EXTENSION) ?: null;
 
-            $this->mediaService->saveFile(
-                $binary,
+            $tmpFile = tempnam(sys_get_temp_dir(), 'plenty_img_');
+            file_put_contents($tmpFile, $binary);
+
+            $mediaFile = new MediaFile(
+                $tmpFile,
+                $mimeType,
+                $extension ?: 'bin',
+                filesize($tmpFile)
+            );
+
+            $this->mediaService->saveMediaFile(
+                $mediaFile,
                 $fileName,
-                $extension,
-                $context,
                 'product',
+                $context,
                 $mediaId
             );
 
