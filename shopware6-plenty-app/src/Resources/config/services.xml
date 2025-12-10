@@ -37,5 +37,12 @@
             <argument type="service" id="PlentyConnector\Service\ProductSyncService"/>
             <tag name="console.command"/>
         </service>
+
+        <service id="PlentyConnector\Command\CleanPlentyProductsCommand">
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="logger"/>
+            <tag name="console.command"/>
+        </service>
     </services>
 </container>
