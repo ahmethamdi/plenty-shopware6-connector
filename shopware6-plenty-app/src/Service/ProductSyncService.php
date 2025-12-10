@@ -10,6 +10,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
+use finfo;
 
 class ProductSyncService
 {
@@ -217,7 +218,24 @@ class ProductSyncService
 
         try {
             $fileName = basename(parse_url($url, PHP_URL_PATH)) ?: Uuid::randomHex();
-            $this->mediaService->saveFileFromUrl($url, $fileName, null, $context, $mediaId);
+            $binary = @file_get_contents($url);
+            if ($binary === false) {
+                return null;
+            }
+
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
+            $extension = pathinfo($fileName, PATHINFO_EXTENSION) ?: null;
+
+            $this->mediaService->saveFile(
+                $binary,
+                $fileName,
+                $extension,
+                $context,
+                'product',
+                $mediaId
+            );
+
             return $mediaId;
         } catch (\Throwable $e) {
             $this->logger->warning('Görsel içe alırken hata: ' . $e->getMessage());
