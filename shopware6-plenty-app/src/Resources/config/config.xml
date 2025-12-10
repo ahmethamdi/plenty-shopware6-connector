@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Plentymarkets API</title>
+
+        <input-field type="text">
+            <name>baseUrl</name>
+            <label>Base URL</label>
+            <placeholder>https://p57085.my.plentysystems.com/rest</placeholder>
+            <helpText>Plentymarkets REST base URL (sonuna /rest ekleyin)</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>username</name>
+            <label>Kullanıcı Adı</label>
+        </input-field>
+
+        <input-field type="text">
+            <name>password</name>
+            <label>Şifre</label>
+        </input-field>
+
+        <input-field type="text">
+            <name>mandantId</name>
+            <label>Mandant ID</label>
+            <helpText>Ürün çekimi ve sipariş oluşturma için kullanılacak Plenty mandant ID</helpText>
+        </input-field>
+
+        <input-field type="int">
+            <name>itemsPerPage</name>
+            <label>Sayfa başına ürün</label>
+            <helpText>Ürün sync sırasında çekilecek ürün adedi</helpText>
+            <defaultValue>100</defaultValue>
+        </input-field>
+    </card>
+</config>

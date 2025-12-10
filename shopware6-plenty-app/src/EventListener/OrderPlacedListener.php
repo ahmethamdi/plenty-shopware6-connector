@@ -6,10 +6,11 @@ use Shopware\Core\Checkout\Order\OrderEvents;
 use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PlentyConnector\Service\OrderSyncService;
+use Shopware\Core\Framework\Context;
 
 class OrderPlacedListener implements EventSubscriberInterface
 {
-    private $orderSyncService;
+    private OrderSyncService $orderSyncService;
 
     public function __construct(OrderSyncService $orderSyncService)
     {
@@ -25,6 +26,10 @@ class OrderPlacedListener implements EventSubscriberInterface
 
     public function onOrderPlaced(EntityWrittenEvent $event): void
     {
-        // Sipariş Plentye gönder
+        $context = $event->getContext();
+
+        foreach ($event->getIds() as $orderId) {
+            $this->orderSyncService->syncOrderToPlenty($orderId, $context);
+        }
     }
 }

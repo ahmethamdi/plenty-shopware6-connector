@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  shopware:
+    image: dockware/play:latest
+    container_name: dockware-shopware6
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3306:3306"
+      - "9999:9999"
+    environment:
+      - APP_ENV=dev
+    volumes:
+      - ./shopware6-plenty-app:/var/www/html/custom/plugins/PlentyConnector
+    tty: true
