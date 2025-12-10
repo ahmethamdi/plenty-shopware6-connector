@@ -1,0 +1,22 @@
+{
+  "name": "plentyconnector/shopware6-plenty-app",
+  "description": "Shopware 6 Plentymarkets Integration App",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.0",
+    "shopware/core": ">=6.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "PlentyConnector\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "PlentyConnector\\PlentyConnectorPlugin",
+    "label": {
+      "de-DE": "Plentymarkets Verbindung",
+      "en-GB": "Plentymarkets Integration"
+    }
+  }
+}
