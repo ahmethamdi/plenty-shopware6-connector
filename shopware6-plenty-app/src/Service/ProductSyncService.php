@@ -303,14 +303,14 @@ class ProductSyncService
                 filesize($tmpFile)
             );
 
-            // persistFileToMedia signature: (MediaFile $mediaFile, string $destination, string $mediaId, Context $context, ?string $fileName = null, bool $strictExtension = true)
-            // destination: "product", fileName: unique file name we built above
+            // persistFileToMedia signature: (MediaFile $mediaFile, string $destination, string $fileName, string $mediaId, Context $context, ?string $path = null, bool $strictExtension = true)
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
                 'product',
+                $uniqueFileName,
                 $mediaId,
                 $context,
-                $uniqueFileName,
+                null,
                 false
             );
 
