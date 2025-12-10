@@ -43,72 +43,45 @@ class CleanPlentyProductsCommand extends Command
 
         $output->writeln('<info>Plenty ürünleri temizleniyor...</info>');
 
-        // Plenty ürünlerini bul (product_number "plenty-" ile başlayanlar)
-        $criteria = new Criteria();
-        $criteria->addFilter(new PrefixFilter('productNumber', 'plenty-'));
-        $criteria->setLimit(500);
+        // Tüm ürünleri toplu sil (sayfalayarak)
+        $productDeleted = 0;
+        do {
+            $criteria = (new Criteria())->setLimit(500);
+            $products = $this->productRepository->search($criteria, $context);
+            $batch = $products->count();
 
-        $products = $this->productRepository->search($criteria, $context);
-        $productCount = $products->count();
-
-        if ($productCount > 0) {
-            $output->writeln("<info>$productCount adet Plenty ürünü bulundu, siliniyor...</info>");
-
-            $deleteIds = [];
-            foreach ($products->getElements() as $product) {
-                $deleteIds[] = ['id' => $product->getId()];
+            if ($batch > 0) {
+                $deleteIds = [];
+                foreach ($products->getElements() as $product) {
+                    $deleteIds[] = ['id' => $product->getId()];
+                }
+                $this->productRepository->delete($deleteIds, $context);
+                $productDeleted += $batch;
+                $output->writeln("<info>$batch ürün silindi (toplam $productDeleted).</info>");
             }
+        } while ($batch > 0);
 
-            $this->productRepository->delete($deleteIds, $context);
-            $output->writeln("<info>$productCount adet ürün silindi.</info>");
-            $this->logger->info("$productCount adet Plenty ürünü silindi");
-        } else {
-            $output->writeln('<info>Silinecek Plenty ürünü bulunamadı.</info>');
-        }
+        $this->logger->info("$productDeleted adet ürün silindi");
 
-        // Plenty media dosyalarını bul (fileName "plenty_" ile başlayanlar)
-        $mediaCriteria = new Criteria();
-        $mediaCriteria->addFilter(new PrefixFilter('fileName', 'plenty_'));
-        $mediaCriteria->setLimit(1000);
+        // Tüm medya dosyalarını toplu sil (sayfalayarak)
+        $mediaDeleted = 0;
+        do {
+            $mediaCriteria = (new Criteria())->setLimit(500);
+            $mediaFiles = $this->mediaRepository->search($mediaCriteria, $context);
+            $mediaBatch = $mediaFiles->count();
 
-        $mediaFiles = $this->mediaRepository->search($mediaCriteria, $context);
-        $mediaCount = $mediaFiles->count();
-
-        if ($mediaCount > 0) {
-            $output->writeln("<info>$mediaCount adet Plenty media dosyası bulundu, siliniyor...</info>");
-
-            $deleteMediaIds = [];
-            foreach ($mediaFiles->getElements() as $media) {
-                $deleteMediaIds[] = ['id' => $media->getId()];
+            if ($mediaBatch > 0) {
+                $deleteMediaIds = [];
+                foreach ($mediaFiles->getElements() as $media) {
+                    $deleteMediaIds[] = ['id' => $media->getId()];
+                }
+                $this->mediaRepository->delete($deleteMediaIds, $context);
+                $mediaDeleted += $mediaBatch;
+                $output->writeln("<info>$mediaBatch adet media silindi (toplam $mediaDeleted).</info>");
             }
+        } while ($mediaBatch > 0);
 
-            $this->mediaRepository->delete($deleteMediaIds, $context);
-            $output->writeln("<info>$mediaCount adet media dosyası silindi.</info>");
-            $this->logger->info("$mediaCount adet Plenty media dosyası silindi");
-        } else {
-            $output->writeln('<info>Silinecek Plenty media dosyası bulunamadı.</info>');
-        }
-
-        // Eski "product" media kayıtlarını da temizle
-        $oldMediaCriteria = new Criteria();
-        $oldMediaCriteria->addFilter(new ContainsFilter('fileName', 'product'));
-        $oldMediaCriteria->setLimit(100);
-
-        $oldMediaFiles = $this->mediaRepository->search($oldMediaCriteria, $context);
-        $oldMediaCount = $oldMediaFiles->count();
-
-        if ($oldMediaCount > 0) {
-            $output->writeln("<info>$oldMediaCount adet eski 'product' media kaydı bulundu, siliniyor...</info>");
-
-            $deleteOldMediaIds = [];
-            foreach ($oldMediaFiles->getElements() as $media) {
-                $deleteOldMediaIds[] = ['id' => $media->getId()];
-            }
-
-            $this->mediaRepository->delete($deleteOldMediaIds, $context);
-            $output->writeln("<info>$oldMediaCount adet eski media kaydı silindi.</info>");
-            $this->logger->info("$oldMediaCount adet eski 'product' media kaydı silindi");
-        }
+        $this->logger->info("$mediaDeleted adet media kaydı silindi");
 
         $output->writeln('<info>Temizlik tamamlandı!</info>');
 
