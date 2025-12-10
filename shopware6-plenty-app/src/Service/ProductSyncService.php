@@ -167,8 +167,17 @@ class ProductSyncService
 
     private function extractPriceGross(array $variation, array $salesPrices = []): ?float
     {
-        if (!empty($salesPrices) && isset($salesPrices[0]['price']) && $salesPrices[0]['price'] !== null) {
-            return (float)$salesPrices[0]['price'];
+        // Prefer sales price id 25 if available
+        if (!empty($salesPrices)) {
+            foreach ($salesPrices as $price) {
+                if ((int)($price['salesPriceId'] ?? 0) === 25 && isset($price['price'])) {
+                    return (float)$price['price'];
+                }
+            }
+            // fallback first
+            if (isset($salesPrices[0]['price']) && $salesPrices[0]['price'] !== null) {
+                return (float)$salesPrices[0]['price'];
+            }
         }
 
         $prices = $variation['prices'] ?? [];
@@ -228,16 +237,21 @@ class ProductSyncService
                 return null;
             }
 
+            $pathInfo = pathinfo($fileName);
+            $baseName = $pathInfo['filename'] ?? Uuid::randomHex();
+            $extension = $pathInfo['extension'] ?? 'jpg';
+
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
 
             $this->mediaService->saveFile(
                 $binary,
-                $fileName,
-                $mimeType,
+                $baseName,
+                $extension,
                 $context,
                 'product',
-                $mediaId
+                $mediaId,
+                $mimeType
             );
 
             return $mediaId;

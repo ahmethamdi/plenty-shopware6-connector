@@ -116,21 +116,37 @@ class PlentyApiService
         $this->ensureAuthenticated();
 
         try {
-            $response = $this->httpClient->request('GET', $this->getBaseUrl() . '/items/variations/' . $variationId . '/salesprices', [
+            // Try variation detail with salesPrices relation first (more stable than nested endpoint)
+            $response = $this->httpClient->request('GET', $this->getBaseUrl() . '/items/variations/' . $variationId, [
                 'headers' => $this->getAuthHeaders(),
+                'query' => ['with' => 'salesPrices'],
             ]);
 
             if ($response->getStatusCode() >= 400) {
-                $body = $response->getContent(false);
-                $this->logger->warning('Plenty sales price çağrısı başarısız', [
-                    'status' => $response->getStatusCode(),
-                    'body' => $body,
-                    'variation' => $variationId,
+                // fallback to legacy nested endpoint
+                $fallback = $this->httpClient->request('GET', $this->getBaseUrl() . '/items/variations/' . $variationId . '/salesprices', [
+                    'headers' => $this->getAuthHeaders(),
                 ]);
-                return [];
+                if ($fallback->getStatusCode() >= 400) {
+                    $body = $fallback->getContent(false);
+                    $this->logger->warning('Plenty sales price çağrısı başarısız', [
+                        'status' => $fallback->getStatusCode(),
+                        'body' => $body,
+                        'variation' => $variationId,
+                    ]);
+                    return [];
+                }
+
+                return $fallback->toArray(false);
             }
 
-            return $response->toArray(false);
+            $data = $response->toArray(false);
+            if (isset($data['salesPrices'])) {
+                return $data['salesPrices'];
+            }
+
+            // If not embedded, try legacy structure
+            return $data;
         } catch (\Throwable $e) {
             $this->logger->warning('Plenty sales price çağrısı hata', ['msg' => $e->getMessage(), 'variation' => $variationId]);
             return [];
