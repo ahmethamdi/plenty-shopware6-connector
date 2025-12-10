@@ -284,31 +284,35 @@ class ProductSyncService
             }
 
             $pathInfo = pathinfo($fileName);
-            $extension = $pathInfo['extension'] ?? 'jpg';
+            $extension = $pathInfo['extension'] ?? null;
 
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($binary) ?: 'application/octet-stream';
 
-            // Her görsel için benzersiz bir filename
-            $uniqueFileName = 'plenty_' . $itemId . '_' . uniqid();
-            $tmpFile = sys_get_temp_dir() . '/' . $uniqueFileName . '.' . $extension;
+            // Her görsel için benzersiz bir filename (uzantısız base)
+            $uniqueBaseName = 'plenty_' . ($itemId ?: 'item') . '_' . uniqid();
+            $extWithDot = $extension ? '.' . $extension : '';
+            $tmpFile = sys_get_temp_dir() . '/' . $uniqueBaseName . $extWithDot;
             file_put_contents($tmpFile, $binary);
 
-            $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, file={$uniqueFileName}, size=" . filesize($tmpFile) . " bytes");
+            $this->logger->info("Görsel Shopware'e kaydediliyor: mediaId={$mediaId}, file={$uniqueBaseName}{$extWithDot}, size=" . filesize($tmpFile) . " bytes");
 
             $mediaFile = new MediaFile(
                 $tmpFile,
                 $mimeType,
-                $extension,
+                $extension ?: 'jpg',
                 filesize($tmpFile)
             );
 
-            // persistFileToMedia: destination folder, then filename (without extension)
+            // persistFileToMedia signature: (MediaFile $mediaFile, string $destination, string $fileName, Context $context, ?string $mediaId = null, ?string $path = null, bool $strictExtension = true)
             $this->fileSaver->persistFileToMedia(
                 $mediaFile,
-                $uniqueFileName,
+                'product',
+                $uniqueBaseName,
+                $context,
                 $mediaId,
-                $context
+                null,
+                false
             );
 
             $this->logger->info("Görsel başarıyla kaydedildi: mediaId={$mediaId}, url={$url}");
