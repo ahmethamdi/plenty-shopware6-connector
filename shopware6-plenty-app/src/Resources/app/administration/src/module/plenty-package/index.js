@@ -9,7 +9,8 @@ Module.register('plenty-package', {
     title: 'plenty-package.general.mainMenuItemGeneral',
     description: 'Manage customer reward packages',
     color: '#ff3d58',
-    icon: 'default-shopping-paper-bag-product',
+    // Use a core icon that exists to avoid failed dynamic imports
+    icon: 'default-shopping-bag',
 
     routes: {
         list: {
@@ -39,7 +40,7 @@ Module.register('plenty-package', {
         {
             group: 'plugins',
             to: 'plenty.package.list',
-            icon: 'default-shopping-paper-bag-product',
+            icon: 'default-shopping-bag',
             label: 'plenty-package.general.mainMenuItemGeneral',
         },
     ],
