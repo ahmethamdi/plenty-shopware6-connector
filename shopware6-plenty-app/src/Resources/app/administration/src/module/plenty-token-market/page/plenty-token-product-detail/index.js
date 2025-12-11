@@ -51,7 +51,7 @@ Component.register('plenty-token-product-detail', {
             this.isLoading = true;
 
             if (this.isCreateMode) {
-                this.product = this.productRepository.create(Shopware.Context.api);
+                this.product = this.productRepository.create();
                 this.product.active = true;
                 this.product.stock = 0;
                 this.isLoading = false;
