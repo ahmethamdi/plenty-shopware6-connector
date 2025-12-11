@@ -8,7 +8,6 @@ Module.register('plenty-connector-utility', {
     title: 'plenty-connector-utility.general.mainMenuItemGeneral',
     description: 'Utility actions for Plentymarkets connector',
     color: '#0e71ba',
-    icon: 'default-object-marketing',
 
     routes: {
         index: {
@@ -24,7 +23,6 @@ Module.register('plenty-connector-utility', {
         {
             group: 'plugins',
             to: 'plenty.connector.utility.index',
-            icon: 'default-object-gear',
             label: 'plenty-connector-utility.general.mainMenuItemGeneral',
         },
     ],

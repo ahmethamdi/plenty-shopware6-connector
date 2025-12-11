@@ -10,7 +10,6 @@ Module.register('plenty-token-market', {
     title: 'plenty-token-market.general.mainMenuItemGeneral',
     description: 'Manage Token Market products and orders',
     color: '#ffa500',
-    icon: 'default-device-headset',
 
     routes: {
         'product-list': {
@@ -47,7 +46,6 @@ Module.register('plenty-token-market', {
         {
             group: 'plugins',
             to: 'plenty.token.market.product-list',
-            icon: 'default-device-headset',
             label: 'plenty-token-market.general.mainMenuItemProducts',
         },
         {

@@ -82,6 +82,11 @@ Component.register('plenty-package-detail', {
         onSave() {
             this.isLoading = true;
 
+            // In create mode, drop any preset id to avoid DAL thinking it's an update
+            if (this.isCreateMode && this.package && this.package.id) {
+                delete this.package.id;
+            }
+
             return this.packageRepository.save(this.package, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
