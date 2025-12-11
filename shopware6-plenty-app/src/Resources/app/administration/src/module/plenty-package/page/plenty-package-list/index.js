@@ -76,7 +76,6 @@ Component.register('plenty-package-list', {
             this.isLoading = true;
 
             const criteria = new Criteria(this.page, this.limit);
-            criteria.addSorting(Criteria.sort('createdAt', 'DESC'));
 
             return this.packageRepository.search(criteria, Shopware.Context.api)
                 .then((result) => {
