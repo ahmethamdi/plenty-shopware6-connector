@@ -66,7 +66,7 @@ class TokenProductEntity extends Entity
         $this->stock = $stock;
     }
 
-    public function isActive(): bool
+    public function getActive(): bool
     {
         return $this->active;
     }

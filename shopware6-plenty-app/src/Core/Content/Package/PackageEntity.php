@@ -13,11 +13,11 @@ class PackageEntity extends Entity
     protected string $name;
     protected float $targetAmount;
     protected int $tokenReward;
-    protected bool $active;
-    protected ?array $categoryIds = null;
-    protected ?string $visibilityType = 'all';
-    protected ?array $allowedCustomerIds = null;
-    protected ?array $excludedCustomerIds = null;
+    protected bool $active = true;
+    protected ?array $categoryIds = [];
+    protected string $visibilityType = 'all';
+    protected ?array $allowedCustomerIds = [];
+    protected ?array $excludedCustomerIds = [];
     protected ?PackageProgressCollection $progresses = null;
 
     public function getName(): string
@@ -50,7 +50,7 @@ class PackageEntity extends Entity
         $this->tokenReward = $tokenReward;
     }
 
-    public function isActive(): bool
+    public function getActive(): bool
     {
         return $this->active;
     }
