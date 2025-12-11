@@ -1,0 +1,98 @@
+<sw-page class="plenty-package-detail">
+    <template #smart-bar-header>
+        <h2 v-if="isCreateMode">{{ $tc('plenty-package.detail.textCreateTitle') }}</h2>
+        <h2 v-else>{{ package.name }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button :disabled="isLoading" @click="onCancel">
+            {{ $tc('plenty-package.detail.buttonCancel') }}
+        </sw-button>
+        <sw-button-process
+            :isLoading="isLoading"
+            :processSuccess="isSaveSuccessful"
+            variant="primary"
+            @click="onSave">
+            {{ $tc('plenty-package.detail.buttonSave') }}
+        </sw-button-process>
+    </template>
+
+    <template #content>
+        <sw-card-view>
+            <sw-card :title="$tc('plenty-package.detail.cardTitleBasic')" :isLoading="isLoading">
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="0px 30px">
+                    <sw-text-field
+                        v-model="package.name"
+                        :label="$tc('plenty-package.detail.labelName')"
+                        :placeholder="$tc('plenty-package.detail.placeholderName')"
+                        :error="packageNameError"
+                        required>
+                    </sw-text-field>
+
+                    <sw-switch-field
+                        v-model="package.active"
+                        :label="$tc('plenty-package.detail.labelActive')">
+                    </sw-switch-field>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="0px 30px">
+                    <sw-number-field
+                        v-model="package.targetAmount"
+                        :label="$tc('plenty-package.detail.labelTargetAmount')"
+                        :placeholder="$tc('plenty-package.detail.placeholderTargetAmount')"
+                        :error="packageTargetAmountError"
+                        numberType="float"
+                        :step="0.01"
+                        required>
+                    </sw-number-field>
+
+                    <sw-number-field
+                        v-model="package.tokenReward"
+                        :label="$tc('plenty-package.detail.labelTokenReward')"
+                        :placeholder="$tc('plenty-package.detail.placeholderTokenReward')"
+                        :error="packageTokenRewardError"
+                        numberType="int"
+                        required>
+                    </sw-number-field>
+                </sw-container>
+            </sw-card>
+
+            <sw-card :title="$tc('plenty-package.detail.cardTitleCategories')" :isLoading="isLoading">
+                <sw-entity-multi-select
+                    v-model="package.categoryIds"
+                    :label="$tc('plenty-package.detail.labelCategories')"
+                    :placeholder="$tc('plenty-package.detail.placeholderCategories')"
+                    :repository="categoryRepository">
+                </sw-entity-multi-select>
+            </sw-card>
+
+            <sw-card :title="$tc('plenty-package.detail.cardTitleVisibility')" :isLoading="isLoading">
+                <sw-single-select
+                    v-model="package.visibilityType"
+                    :label="$tc('plenty-package.detail.labelVisibilityType')"
+                    :options="[
+                        { value: 'all', label: $tc('plenty-package.detail.visibilityAll') },
+                        { value: 'whitelist', label: $tc('plenty-package.detail.visibilityWhitelist') },
+                        { value: 'blacklist', label: $tc('plenty-package.detail.visibilityBlacklist') }
+                    ]">
+                </sw-single-select>
+
+                <sw-entity-multi-select
+                    v-if="package.visibilityType === 'whitelist'"
+                    v-model="package.allowedCustomerIds"
+                    :label="$tc('plenty-package.detail.labelAllowedCustomers')"
+                    :placeholder="$tc('plenty-package.detail.placeholderAllowedCustomers')"
+                    :repository="customerRepository">
+                </sw-entity-multi-select>
+
+                <sw-entity-multi-select
+                    v-if="package.visibilityType === 'blacklist'"
+                    v-model="package.excludedCustomerIds"
+                    :label="$tc('plenty-package.detail.labelExcludedCustomers')"
+                    :placeholder="$tc('plenty-package.detail.placeholderExcludedCustomers')"
+                    :repository="customerRepository">
+                </sw-entity-multi-select>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>

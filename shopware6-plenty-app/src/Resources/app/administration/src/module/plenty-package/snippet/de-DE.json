@@ -1,0 +1,41 @@
+{
+  "plenty-package": {
+    "general": {
+      "mainMenuItemGeneral": "Paket Yönetimi"
+    },
+    "list": {
+      "textTitle": "Paketler",
+      "buttonAddPackage": "Paket Ekle",
+      "columnName": "Paket Adı",
+      "columnTargetAmount": "Hedef Tutar",
+      "columnTokenReward": "Token Ödülü",
+      "columnActive": "Aktif"
+    },
+    "detail": {
+      "textCreateTitle": "Yeni Paket Oluştur",
+      "buttonCancel": "İptal",
+      "buttonSave": "Kaydet",
+      "cardTitleBasic": "Temel Bilgiler",
+      "cardTitleCategories": "Kategoriler",
+      "cardTitleVisibility": "Görünürlük Ayarları",
+      "labelName": "Paket Adı",
+      "placeholderName": "Örn: Elfbar Paketi",
+      "labelActive": "Aktif",
+      "labelTargetAmount": "Hedef Tutar (€)",
+      "placeholderTargetAmount": "Örn: 3500.00",
+      "labelTokenReward": "Token Ödülü",
+      "placeholderTokenReward": "Örn: 100",
+      "labelCategories": "Kategoriler",
+      "placeholderCategories": "Kategori seç...",
+      "labelVisibilityType": "Görünürlük Tipi",
+      "visibilityAll": "Tüm Müşteriler",
+      "visibilityWhitelist": "Sadece Seçili Müşteriler",
+      "visibilityBlacklist": "Seçili Müşteriler Hariç",
+      "labelAllowedCustomers": "İzinli Müşteriler",
+      "placeholderAllowedCustomers": "Müşteri seç...",
+      "labelExcludedCustomers": "Hariç Tutulan Müşteriler",
+      "placeholderExcludedCustomers": "Müşteri seç...",
+      "errorMessage": "Paket kaydedilemedi!"
+    }
+  }
+}

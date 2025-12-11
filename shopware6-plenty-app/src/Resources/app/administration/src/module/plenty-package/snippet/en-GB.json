@@ -1,0 +1,41 @@
+{
+  "plenty-package": {
+    "general": {
+      "mainMenuItemGeneral": "Package Management"
+    },
+    "list": {
+      "textTitle": "Packages",
+      "buttonAddPackage": "Add Package",
+      "columnName": "Package Name",
+      "columnTargetAmount": "Target Amount",
+      "columnTokenReward": "Token Reward",
+      "columnActive": "Active"
+    },
+    "detail": {
+      "textCreateTitle": "Create New Package",
+      "buttonCancel": "Cancel",
+      "buttonSave": "Save",
+      "cardTitleBasic": "Basic Information",
+      "cardTitleCategories": "Categories",
+      "cardTitleVisibility": "Visibility Settings",
+      "labelName": "Package Name",
+      "placeholderName": "e.g.: Elfbar Package",
+      "labelActive": "Active",
+      "labelTargetAmount": "Target Amount (€)",
+      "placeholderTargetAmount": "e.g.: 3500.00",
+      "labelTokenReward": "Token Reward",
+      "placeholderTokenReward": "e.g.: 100",
+      "labelCategories": "Categories",
+      "placeholderCategories": "Select categories...",
+      "labelVisibilityType": "Visibility Type",
+      "visibilityAll": "All Customers",
+      "visibilityWhitelist": "Only Selected Customers",
+      "visibilityBlacklist": "Exclude Selected Customers",
+      "labelAllowedCustomers": "Allowed Customers",
+      "placeholderAllowedCustomers": "Select customers...",
+      "labelExcludedCustomers": "Excluded Customers",
+      "placeholderExcludedCustomers": "Select customers...",
+      "errorMessage": "Package could not be saved!"
+    }
+  }
+}

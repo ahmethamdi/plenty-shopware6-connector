@@ -1,0 +1,22 @@
+<sw-page class="plenty-package-list">
+    <template #smart-bar-header>
+        <h2>{{ $tc('plenty-package.list.textTitle') }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button :routerLink="{ name: 'plenty.package.create' }" variant="primary">
+            {{ $tc('plenty-package.list.buttonAddPackage') }}
+        </sw-button>
+    </template>
+
+    <template #content>
+        <sw-entity-listing
+            :repository="packageRepository"
+            :items="packages"
+            :columns="columns"
+            :isLoading="isLoading"
+            detailRoute="plenty.package.detail"
+            @update-records="getList">
+        </sw-entity-listing>
+    </template>
+</sw-page>
