@@ -1,0 +1,70 @@
+<sw-page class="plenty-token-product-detail">
+    <template #smart-bar-header>
+        <h2 v-if="isCreateMode">{{ $tc('plenty-token-market.productDetail.textCreateTitle') }}</h2>
+        <h2 v-else>{{ product.name }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button :disabled="isLoading" @click="onCancel">
+            {{ $tc('plenty-token-market.productDetail.buttonCancel') }}
+        </sw-button>
+        <sw-button-process
+            :isLoading="isLoading"
+            :processSuccess="isSaveSuccessful"
+            variant="primary"
+            @click="onSave">
+            {{ $tc('plenty-token-market.productDetail.buttonSave') }}
+        </sw-button-process>
+    </template>
+
+    <template #content>
+        <sw-card-view>
+            <sw-card :title="$tc('plenty-token-market.productDetail.cardTitleBasic')" :isLoading="isLoading">
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="0px 30px">
+                    <sw-text-field
+                        v-model="product.name"
+                        :label="$tc('plenty-token-market.productDetail.labelName')"
+                        :placeholder="$tc('plenty-token-market.productDetail.placeholderName')"
+                        :error="productNameError"
+                        required>
+                    </sw-text-field>
+
+                    <sw-switch-field
+                        v-model="product.active"
+                        :label="$tc('plenty-token-market.productDetail.labelActive')">
+                    </sw-switch-field>
+                </sw-container>
+
+                <sw-textarea-field
+                    v-model="product.description"
+                    :label="$tc('plenty-token-market.productDetail.labelDescription')"
+                    :placeholder="$tc('plenty-token-market.productDetail.placeholderDescription')">
+                </sw-textarea-field>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="0px 30px">
+                    <sw-number-field
+                        v-model="product.tokenPrice"
+                        :label="$tc('plenty-token-market.productDetail.labelTokenPrice')"
+                        :placeholder="$tc('plenty-token-market.productDetail.placeholderTokenPrice')"
+                        :error="productTokenPriceError"
+                        numberType="int"
+                        required>
+                    </sw-number-field>
+
+                    <sw-number-field
+                        v-model="product.stock"
+                        :label="$tc('plenty-token-market.productDetail.labelStock')"
+                        :placeholder="$tc('plenty-token-market.productDetail.placeholderStock')"
+                        numberType="int">
+                    </sw-number-field>
+                </sw-container>
+
+                <sw-text-field
+                    v-model="product.imageUrl"
+                    :label="$tc('plenty-token-market.productDetail.labelImageUrl')"
+                    :placeholder="$tc('plenty-token-market.productDetail.placeholderImageUrl')">
+                </sw-text-field>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>

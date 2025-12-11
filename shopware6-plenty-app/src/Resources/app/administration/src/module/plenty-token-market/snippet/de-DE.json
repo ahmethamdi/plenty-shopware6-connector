@@ -1,0 +1,43 @@
+{
+  "plenty-token-market": {
+    "general": {
+      "mainMenuItemGeneral": "Token Market",
+      "mainMenuItemProducts": "Token Market Ürünleri",
+      "mainMenuItemOrders": "Token Siparişleri"
+    },
+    "productList": {
+      "textTitle": "Token Market Ürünleri",
+      "buttonAddProduct": "Ürün Ekle",
+      "columnName": "Ürün Adı",
+      "columnTokenPrice": "Token Fiyatı",
+      "columnStock": "Stok",
+      "columnActive": "Aktif"
+    },
+    "productDetail": {
+      "textCreateTitle": "Yeni Token Market Ürünü",
+      "buttonCancel": "İptal",
+      "buttonSave": "Kaydet",
+      "cardTitleBasic": "Ürün Bilgileri",
+      "labelName": "Ürün Adı",
+      "placeholderName": "Örn: iPhone 15 Pro",
+      "labelDescription": "Açıklama",
+      "placeholderDescription": "Ürün açıklaması...",
+      "labelTokenPrice": "Token Fiyatı",
+      "placeholderTokenPrice": "Örn: 5000",
+      "labelStock": "Stok Adedi",
+      "placeholderStock": "Örn: 10",
+      "labelImageUrl": "Görsel URL",
+      "placeholderImageUrl": "https://...",
+      "labelActive": "Aktif",
+      "errorMessage": "Ürün kaydedilemedi!"
+    },
+    "orderList": {
+      "textTitle": "Token Siparişleri",
+      "columnDate": "Tarih",
+      "columnCustomer": "Müşteri",
+      "columnProduct": "Ürün",
+      "columnTokenAmount": "Token Miktarı",
+      "columnStatus": "Durum"
+    }
+  }
+}

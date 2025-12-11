@@ -1,0 +1,22 @@
+<sw-page class="plenty-token-product-list">
+    <template #smart-bar-header>
+        <h2>{{ $tc('plenty-token-market.productList.textTitle') }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button :routerLink="{ name: 'plenty.token.market.product-create' }" variant="primary">
+            {{ $tc('plenty-token-market.productList.buttonAddProduct') }}
+        </sw-button>
+    </template>
+
+    <template #content>
+        <sw-entity-listing
+            :repository="productRepository"
+            :items="products"
+            :columns="columns"
+            :isLoading="isLoading"
+            detailRoute="plenty.token.market.product-detail"
+            @update-records="getList">
+        </sw-entity-listing>
+    </template>
+</sw-page>

@@ -1,0 +1,43 @@
+{
+  "plenty-token-market": {
+    "general": {
+      "mainMenuItemGeneral": "Token Market",
+      "mainMenuItemProducts": "Token Market Products",
+      "mainMenuItemOrders": "Token Orders"
+    },
+    "productList": {
+      "textTitle": "Token Market Products",
+      "buttonAddProduct": "Add Product",
+      "columnName": "Product Name",
+      "columnTokenPrice": "Token Price",
+      "columnStock": "Stock",
+      "columnActive": "Active"
+    },
+    "productDetail": {
+      "textCreateTitle": "New Token Market Product",
+      "buttonCancel": "Cancel",
+      "buttonSave": "Save",
+      "cardTitleBasic": "Product Information",
+      "labelName": "Product Name",
+      "placeholderName": "e.g.: iPhone 15 Pro",
+      "labelDescription": "Description",
+      "placeholderDescription": "Product description...",
+      "labelTokenPrice": "Token Price",
+      "placeholderTokenPrice": "e.g.: 5000",
+      "labelStock": "Stock Quantity",
+      "placeholderStock": "e.g.: 10",
+      "labelImageUrl": "Image URL",
+      "placeholderImageUrl": "https://...",
+      "labelActive": "Active",
+      "errorMessage": "Product could not be saved!"
+    },
+    "orderList": {
+      "textTitle": "Token Orders",
+      "columnDate": "Date",
+      "columnCustomer": "Customer",
+      "columnProduct": "Product",
+      "columnTokenAmount": "Token Amount",
+      "columnStatus": "Status"
+    }
+  }
+}
