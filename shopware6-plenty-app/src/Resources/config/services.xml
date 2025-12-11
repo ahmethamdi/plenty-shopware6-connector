@@ -49,5 +49,26 @@
             <argument type="service" id="Shopware\Core\Framework\Adapter\Cache\CacheClearer"/>
             <argument type="service" id="PlentyConnector\Service\ProductSyncService"/>
         </service>
+
+        <!-- Token System Entity Definitions -->
+        <service id="PlentyConnector\Core\Content\Package\PackageDefinition">
+            <tag name="shopware.entity.definition" entity="plenty_package"/>
+        </service>
+
+        <service id="PlentyConnector\Core\Content\PackageProgress\PackageProgressDefinition">
+            <tag name="shopware.entity.definition" entity="plenty_package_progress"/>
+        </service>
+
+        <service id="PlentyConnector\Core\Content\TokenTransaction\TokenTransactionDefinition">
+            <tag name="shopware.entity.definition" entity="plenty_token_transaction"/>
+        </service>
+
+        <service id="PlentyConnector\Core\Content\TokenProduct\TokenProductDefinition">
+            <tag name="shopware.entity.definition" entity="plenty_token_product"/>
+        </service>
+
+        <service id="PlentyConnector\Core\Content\TokenOrder\TokenOrderDefinition">
+            <tag name="shopware.entity.definition" entity="plenty_token_order"/>
+        </service>
     </services>
 </container>
