@@ -4,6 +4,7 @@ namespace PlentyConnector\Core\Content\Package;
 
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\BoolField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FloatField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
@@ -12,6 +13,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToManyAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 use PlentyConnector\Core\Content\PackageProgress\PackageProgressDefinition;
 
@@ -47,6 +49,8 @@ class PackageDefinition extends EntityDefinition
             (new JsonField('allowed_customer_ids', 'allowedCustomerIds')),
             (new JsonField('excluded_customer_ids', 'excludedCustomerIds')),
             new OneToManyAssociationField('progresses', PackageProgressDefinition::class, 'package_id'),
+            new CreatedAtField(),
+            new UpdatedAtField(),
         ]);
     }
 }

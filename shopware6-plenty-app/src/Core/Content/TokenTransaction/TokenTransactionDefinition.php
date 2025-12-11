@@ -7,6 +7,7 @@ use PlentyConnector\Core\Content\TokenProduct\TokenProductDefinition;
 use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Checkout\Order\OrderDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
@@ -14,6 +15,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class TokenTransactionDefinition extends EntityDefinition
@@ -49,6 +51,8 @@ class TokenTransactionDefinition extends EntityDefinition
             new ManyToOneAssociationField('package', 'package_id', PackageDefinition::class, 'id'),
             new ManyToOneAssociationField('tokenProduct', 'token_product_id', TokenProductDefinition::class, 'id'),
             new ManyToOneAssociationField('order', 'order_id', OrderDefinition::class, 'id'),
+            new CreatedAtField(),
+            new UpdatedAtField(),
         ]);
     }
 }

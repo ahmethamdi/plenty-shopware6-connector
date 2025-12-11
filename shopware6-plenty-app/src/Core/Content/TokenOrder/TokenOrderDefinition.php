@@ -5,6 +5,7 @@ namespace PlentyConnector\Core\Content\TokenOrder;
 use PlentyConnector\Core\Content\TokenProduct\TokenProductDefinition;
 use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
@@ -13,6 +14,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class TokenOrderDefinition extends EntityDefinition
@@ -45,6 +47,8 @@ class TokenOrderDefinition extends EntityDefinition
             new JsonField('customer_address', 'customerAddress'),
             new ManyToOneAssociationField('customer', 'customer_id', CustomerDefinition::class, 'id'),
             new ManyToOneAssociationField('tokenProduct', 'token_product_id', TokenProductDefinition::class, 'id'),
+            new CreatedAtField(),
+            new UpdatedAtField(),
         ]);
     }
 }

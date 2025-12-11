@@ -5,6 +5,7 @@ namespace PlentyConnector\Core\Content\PackageProgress;
 use PlentyConnector\Core\Content\Package\PackageDefinition;
 use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\DateTimeField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FloatField;
@@ -13,6 +14,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class PackageProgressDefinition extends EntityDefinition
@@ -45,6 +47,8 @@ class PackageProgressDefinition extends EntityDefinition
             new DateTimeField('last_reset_at', 'lastResetAt'),
             new ManyToOneAssociationField('customer', 'customer_id', CustomerDefinition::class, 'id'),
             new ManyToOneAssociationField('package', 'package_id', PackageDefinition::class, 'id'),
+            new CreatedAtField(),
+            new UpdatedAtField(),
         ]);
     }
 }
