@@ -1,0 +1,200 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{% block base_content %}
+    <div class="container my-5">
+        <div class="token-market">
+            <h1 class="mb-4">{{ "tokenMarket.title"|trans }}</h1>
+
+            {# Token Balance #}
+            <div class="alert alert-info mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">{{ "tokenMarket.yourBalance"|trans }}</h5>
+                    </div>
+                    <div class="h3 mb-0 text-primary">
+                        <strong id="token-balance">{{ tokenBalance }}</strong> {{ "tokenMarket.tokens"|trans }}
+                    </div>
+                </div>
+            </div>
+
+            {# Products Grid #}
+            <h2 class="mb-3">{{ "tokenMarket.products"|trans }}</h2>
+
+            {% if products|length > 0 %}
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                {% if product.imageUrl %}
+                                    <img src="{{ product.imageUrl }}"
+                                         class="card-img-top"
+                                         alt="{{ product.name }}"
+                                         style="height: 200px; object-fit: cover;">
+                                {% endif %}
+
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+
+                                    {% if product.description %}
+                                        <p class="card-text">{{ product.description }}</p>
+                                    {% endif %}
+
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <strong class="h4 text-primary">{{ product.tokenPrice }}</strong>
+                                                <small class="text-muted">{{ "tokenMarket.tokens"|trans }}</small>
+                                            </div>
+                                            {% if product.stock is not null %}
+                                                <div>
+                                                    <small class="text-muted">
+                                                        {{ "tokenMarket.stock"|trans }}: {{ product.stock }}
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                        {% set canBuy = tokenBalance >= product.tokenPrice and (product.stock is null or product.stock > 0) %}
+
+                                        <button class="btn btn-primary w-100 buy-product-btn"
+                                                data-product-id="{{ product.id }}"
+                                                data-product-name="{{ product.name }}"
+                                                data-token-price="{{ product.tokenPrice }}"
+                                                {% if not canBuy %}disabled{% endif %}>
+                                            {% if product.stock is not null and product.stock <= 0 %}
+                                                {{ "tokenMarket.outOfStock"|trans }}
+                                            {% elseif tokenBalance < product.tokenPrice %}
+                                                {{ "tokenMarket.insufficientBalance"|trans }}
+                                            {% else %}
+                                                {{ "tokenMarket.buyNow"|trans }}
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    {{ "tokenMarket.noProducts"|trans }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Purchase Modal #}
+    <div class="modal fade" id="purchaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ "tokenMarket.shippingInfo"|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="purchaseForm">
+                        <input type="hidden" id="purchase-product-id" name="productId">
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ "tokenMarket.address"|trans }}</label>
+                            <input type="text" class="form-control" name="shipping[address]" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">{{ "tokenMarket.city"|trans }}</label>
+                                <input type="text" class="form-control" name="shipping[city]" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">{{ "tokenMarket.postalCode"|trans }}</label>
+                                <input type="text" class="form-control" name="shipping[postalCode]" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ "tokenMarket.phone"|trans }}</label>
+                            <input type="tel" class="form-control" name="shipping[phone]" required>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <small id="purchase-confirmation-text"></small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmPurchaseBtn">
+                        {{ "tokenMarket.confirmOrder"|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block base_body_script %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const purchaseModal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            const purchaseForm = document.getElementById('purchaseForm');
+            const confirmBtn = document.getElementById('confirmPurchaseBtn');
+            let currentProductData = {};
+
+            // Open modal when buy button clicked
+            document.querySelectorAll('.buy-product-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentProductData = {
+                        id: this.dataset.productId,
+                        name: this.dataset.productName,
+                        price: parseInt(this.dataset.tokenPrice)
+                    };
+
+                    document.getElementById('purchase-product-id').value = currentProductData.id;
+                    document.getElementById('purchase-confirmation-text').textContent =
+                        `You are about to purchase ${currentProductData.name} for ${currentProductData.price} tokens.`;
+
+                    purchaseForm.reset();
+                    purchaseModal.show();
+                });
+            });
+
+            // Handle purchase confirmation
+            confirmBtn.addEventListener('click', async function() {
+                if (!purchaseForm.checkValidity()) {
+                    purchaseForm.reportValidity();
+                    return;
+                }
+
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+
+                try {
+                    const formData = new FormData(purchaseForm);
+
+                    const response = await fetch('{{ path('frontend.token.market.purchase') }}', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('{{ "tokenMarket.orderSuccess"|trans }}');
+                        document.getElementById('token-balance').textContent = result.newBalance;
+                        purchaseModal.hide();
+                        location.reload();
+                    } else {
+                        alert('{{ "tokenMarket.orderError"|trans }}: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('{{ "tokenMarket.orderError"|trans }}');
+                    console.error(error);
+                } finally {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '{{ "tokenMarket.confirmOrder"|trans }}';
+                }
+            });
+        });
+    </script>
+{% endblock %}

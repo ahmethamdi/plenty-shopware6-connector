@@ -58,16 +58,16 @@
             </sw-card>
 
             <sw-card :title="$tc('plenty-package.detail.cardTitleCategories')" :isLoading="isLoading">
-                <sw-entity-multi-select
+                <sw-entity-multi-id-select
                     v-model="package.categoryIds"
                     :label="$tc('plenty-package.detail.labelCategories')"
                     :placeholder="$tc('plenty-package.detail.placeholderCategories')"
                     :repository="categoryRepository">
-                </sw-entity-multi-select>
+                </sw-entity-multi-id-select>
             </sw-card>
 
             <sw-card :title="$tc('plenty-package.detail.cardTitleVisibility')" :isLoading="isLoading">
-                <sw-single-select
+                <sw-select-field
                     v-model="package.visibilityType"
                     :label="$tc('plenty-package.detail.labelVisibilityType')"
                     :options="[
@@ -75,23 +75,23 @@
                         { value: 'whitelist', label: $tc('plenty-package.detail.visibilityWhitelist') },
                         { value: 'blacklist', label: $tc('plenty-package.detail.visibilityBlacklist') }
                     ]">
-                </sw-single-select>
+                </sw-select-field>
 
-                <sw-entity-multi-select
+                <sw-entity-multi-id-select
                     v-if="package.visibilityType === 'whitelist'"
                     v-model="package.allowedCustomerIds"
                     :label="$tc('plenty-package.detail.labelAllowedCustomers')"
                     :placeholder="$tc('plenty-package.detail.placeholderAllowedCustomers')"
                     :repository="customerRepository">
-                </sw-entity-multi-select>
+                </sw-entity-multi-id-select>
 
-                <sw-entity-multi-select
+                <sw-entity-multi-id-select
                     v-if="package.visibilityType === 'blacklist'"
                     v-model="package.excludedCustomerIds"
                     :label="$tc('plenty-package.detail.labelExcludedCustomers')"
                     :placeholder="$tc('plenty-package.detail.placeholderExcludedCustomers')"
                     :repository="customerRepository">
-                </sw-entity-multi-select>
+                </sw-entity-multi-id-select>
             </sw-card>
         </sw-card-view>
     </template>

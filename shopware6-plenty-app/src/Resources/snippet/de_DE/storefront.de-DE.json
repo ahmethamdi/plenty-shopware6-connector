@@ -1,0 +1,35 @@
+{
+  "account": {
+    "packagesTitle": "Meine Pakete",
+    "tokenBalance": "Token Guthaben",
+    "tokens": "Tokens",
+    "progress": "Fortschritt",
+    "tokenReward": "Token Belohnung",
+    "completedCycles": "Abgeschlossene Zyklen",
+    "packageCompleted": "Paket abgeschlossen! Tokens wurden gutgeschrieben.",
+    "noPackages": "Derzeit sind keine Pakete für Sie verfügbar.",
+    "viewTokenMarket": "Token Markt ansehen"
+  },
+  "tokenMarket": {
+    "title": "Token Markt",
+    "yourBalance": "Ihr Guthaben",
+    "tokens": "Tokens",
+    "products": "Verfügbare Produkte",
+    "productName": "Produkt",
+    "price": "Preis",
+    "stock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "buyNow": "Jetzt kaufen",
+    "insufficientBalance": "Nicht genügend Tokens",
+    "orderSuccess": "Bestellung erfolgreich! Wir werden uns in Kürze mit Ihnen in Verbindung setzen.",
+    "orderError": "Bestellung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "noProducts": "Derzeit sind keine Produkte verfügbar.",
+    "confirmPurchase": "Möchten Sie dieses Produkt wirklich für {tokenPrice} Tokens kaufen?",
+    "shippingInfo": "Versandinformationen",
+    "address": "Adresse",
+    "city": "Stadt",
+    "postalCode": "Postleitzahl",
+    "phone": "Telefon",
+    "confirmOrder": "Bestellung bestätigen"
+  }
+}

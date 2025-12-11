@@ -78,11 +78,19 @@ Component.register('plenty-package-list', {
             const criteria = new Criteria(this.page, this.limit);
             criteria.addSorting(Criteria.sort('createdAt', 'DESC'));
 
-            return this.packageRepository.search(criteria, Shopware.Context.api).then((result) => {
-                this.packages = result;
-                this.total = result.total;
-                this.isLoading = false;
-            });
+            return this.packageRepository.search(criteria, Shopware.Context.api)
+                .then((result) => {
+                    this.packages = result;
+                    this.total = result.total;
+                    this.isLoading = false;
+                    return result;
+                })
+                .catch((error) => {
+                    console.error('Error loading packages:', error);
+                    this.isLoading = false;
+                    this.packages = [];
+                    this.total = 0;
+                });
         },
 
         onChangeLanguage() {
