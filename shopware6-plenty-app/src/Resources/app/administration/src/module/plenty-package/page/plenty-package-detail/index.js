@@ -87,13 +87,17 @@ Component.register('plenty-package-detail', {
                 delete this.package.id;
             }
 
+            console.log('Saving package:', JSON.stringify(this.package, null, 2));
+
             return this.packageRepository.save(this.package, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
                     this.isSaveSuccessful = true;
                     this.$router.push({ name: 'plenty.package.detail', params: { id: this.package.id } });
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.error('Save error:', error);
+                    console.error('Error response:', error.response);
                     this.isLoading = false;
                     this.createNotificationError({
                         message: this.$tc('plenty-package.detail.errorMessage'),
