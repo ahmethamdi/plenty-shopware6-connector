@@ -82,22 +82,32 @@ Component.register('plenty-package-detail', {
         onSave() {
             this.isLoading = true;
 
-            console.log('Saving package:', JSON.stringify(this.package, null, 2));
+            // Build payload explicitly and drop id in create mode to force insert
+            const payload = {
+                name: this.package.name,
+                targetAmount: this.package.targetAmount,
+                tokenReward: this.package.tokenReward,
+                active: this.package.active,
+                visibilityType: this.package.visibilityType,
+                categoryIds: this.package.categoryIds,
+                allowedCustomerIds: this.package.allowedCustomerIds,
+                excludedCustomerIds: this.package.excludedCustomerIds,
+            };
 
-            // In create mode, ensure entity is marked as new
-            if (this.isCreateMode && this.package.id) {
-                delete this.package.id;
+            if (!this.isCreateMode && this.package.id) {
+                payload.id = this.package.id;
             }
 
-            return this.packageRepository.save(this.package, Shopware.Context.api)
+            return this.packageRepository.save(payload, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
                     this.isSaveSuccessful = true;
-                    if (this.package.id) {
-                        this.$router.push({ name: 'plenty.package.detail', params: { id: this.package.id } });
-                    } else {
-                        this.$router.push({ name: 'plenty.package.list' });
-                    }
+                    const newId = payload.id || (this.package && this.package.id);
+                    this.$router.push(
+                        newId
+                            ? { name: 'plenty.package.detail', params: { id: newId } }
+                            : { name: 'plenty.package.list' }
+                    );
                 })
                 .catch((error) => {
                     console.error('Save error:', error);
