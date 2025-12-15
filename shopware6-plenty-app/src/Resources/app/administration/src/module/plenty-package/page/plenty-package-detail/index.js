@@ -82,30 +82,33 @@ Component.register('plenty-package-detail', {
         onSave() {
             this.isLoading = true;
 
-            // Shopware repository expects an entity; on create use a fresh entity without id
-            let entityToSave;
+            // Always pass a Shopware Entity to the repository
+            const entity = this.isCreateMode
+                ? this.packageRepository.create(Shopware.Context.api)
+                : this.package;
+
+            entity.name = this.package.name;
+            entity.targetAmount = this.package.targetAmount;
+            entity.tokenReward = this.package.tokenReward;
+            entity.active = this.package.active;
+            entity.visibilityType = this.package.visibilityType;
+            entity.categoryIds = this.package.categoryIds || [];
+            entity.allowedCustomerIds = this.package.allowedCustomerIds || [];
+            entity.excludedCustomerIds = this.package.excludedCustomerIds || [];
+
             if (this.isCreateMode) {
-                const fresh = this.packageRepository.create(Shopware.Context.api);
-                fresh.name = this.package.name;
-                fresh.targetAmount = this.package.targetAmount;
-                fresh.tokenReward = this.package.tokenReward;
-                fresh.active = this.package.active;
-                fresh.visibilityType = this.package.visibilityType;
-                fresh.categoryIds = this.package.categoryIds || [];
-                fresh.allowedCustomerIds = this.package.allowedCustomerIds || [];
-                fresh.excludedCustomerIds = this.package.excludedCustomerIds || [];
-                // ensure DAL treats this as insert
-                fresh._isNew = true;
-                entityToSave = fresh;
-            } else {
-                entityToSave = this.package;
+                // Ensure insert, not update
+                if (entity.id) {
+                    delete entity.id;
+                }
+                entity._isNew = true;
             }
 
-            return this.packageRepository.save(entityToSave, Shopware.Context.api)
+            return this.packageRepository.save(entity, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
                     this.isSaveSuccessful = true;
-                    const newId = entityToSave.id || (this.package && this.package.id);
+                    const newId = entity.id || (this.package && this.package.id);
                     this.$router.push(newId
                         ? { name: 'plenty.package.detail', params: { id: newId } }
                         : { name: 'plenty.package.list' });
