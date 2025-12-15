@@ -45,7 +45,7 @@ class ProductSyncService
         $this->logger = $logger;
     }
 
-    public function syncProducts(Context $context): void
+    public function syncProducts(Context $context): int
     {
         $this->logger->info('Ürün senkronizasyonu başladı');
 
@@ -53,11 +53,12 @@ class ProductSyncService
             $this->plentyApiService->authenticate();
         } catch (\Throwable $e) {
             $this->logger->error('Plenty oturum açma başarısız, sync iptal: ' . $e->getMessage());
-            return;
+            return 0;
         }
 
         $page = 0;
         $itemsPerPage = (int)($this->config->get('PlentyConnectorPlugin.config.itemsPerPage') ?? 100);
+        $processed = 0;
 
         do {
             $response = $this->plentyApiService->getProducts($page, $itemsPerPage);
@@ -68,12 +69,15 @@ class ProductSyncService
 
             foreach ($response['entries'] as $plentyProduct) {
                 $this->upsertProduct($plentyProduct, $context);
+                $processed++;
             }
 
             $page++;
         } while (isset($response['isLastPage']) && !$response['isLastPage']);
 
-        $this->logger->info('Ürün senkronizasyonu tamamlandı');
+        $this->logger->info('Ürün senkronizasyonu tamamlandı', ['count' => $processed]);
+
+        return $processed;
     }
 
     private function upsertProduct(array $plentyProduct, Context $context): void

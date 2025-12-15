@@ -9,12 +9,16 @@
     },
     "buttons": {
       "clearCache": "Clear cache",
+      "testConnection": "Test connection",
       "syncProducts": "Sync products"
     },
     "messages": {
       "cacheCleared": "Cache cleared",
       "cacheFailed": "Cache clear failed",
+      "connectionOk": "Connection successful",
+      "connectionFailed": "Connection failed",
       "syncTriggered": "Product sync triggered",
+      "syncFinishedCount": "Sync finished. Processed products: {0}",
       "syncFailed": "Product sync failed"
     }
   }

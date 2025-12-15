@@ -11,4 +11,12 @@
     <route id="api.action.plenty.sync_products" path="/api/_action/plenty/sync-products" methods="POST">
         <default key="_controller">PlentyConnector\Controller\AdminUtilityController::syncProducts</default>
     </route>
+
+    <route id="api.action.plenty.test_connection" path="/api/_action/plenty/test-connection" methods="POST">
+        <default key="_controller">PlentyConnector\Controller\AdminUtilityController::testConnection</default>
+    </route>
+
+    <route id="api.action.plenty.sync_products_with_count" path="/api/_action/plenty/sync-products-with-count" methods="POST">
+        <default key="_controller">PlentyConnector\Controller\AdminUtilityController::syncProductsWithCount</default>
+    </route>
 </routes>

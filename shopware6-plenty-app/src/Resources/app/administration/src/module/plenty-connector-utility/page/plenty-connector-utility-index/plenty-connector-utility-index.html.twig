@@ -13,6 +13,12 @@
                         {{ $tc('plenty-connector-utility.buttons.clearCache') }}
                     </sw-button>
 
+                    <sw-button :loading="isTesting"
+                               variant="ghost"
+                               @click="testConnection">
+                        {{ $tc('plenty-connector-utility.buttons.testConnection') }}
+                    </sw-button>
+
                     <sw-button :loading="isSyncing"
                                variant="ghost"
                                @click="syncProducts">

@@ -9,12 +9,16 @@
     },
     "buttons": {
       "clearCache": "Cache temizle",
+      "testConnection": "Bağlantıyı test et",
       "syncProducts": "Ürünleri senkronize et"
     },
     "messages": {
       "cacheCleared": "Cache temizlendi",
       "cacheFailed": "Cache temizlenemedi",
+      "connectionOk": "Bağlantı başarılı",
+      "connectionFailed": "Bağlantı başarısız",
       "syncTriggered": "Ürün senkronu tetiklendi",
+      "syncFinishedCount": "Sync tamamlandı. İşlenen ürün: {0}",
       "syncFailed": "Ürün senkronu başarısız"
     }
   }

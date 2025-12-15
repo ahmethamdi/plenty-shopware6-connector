@@ -9,12 +9,16 @@
     },
     "buttons": {
       "clearCache": "Cache leeren",
+      "testConnection": "Verbindung testen",
       "syncProducts": "Produkte synchronisieren"
     },
     "messages": {
       "cacheCleared": "Cache geleert",
       "cacheFailed": "Cache-Leerung fehlgeschlagen",
+      "connectionOk": "Verbindung erfolgreich",
+      "connectionFailed": "Verbindung fehlgeschlagen",
       "syncTriggered": "Produktsync gestartet",
+      "syncFinishedCount": "Sync abgeschlossen. Verarbeitete Produkte: {0}",
       "syncFailed": "Produktsync fehlgeschlagen"
     }
   }

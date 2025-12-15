@@ -29,8 +29,8 @@ class SyncProductsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $context = Context::createDefaultContext();
-        $this->productSyncService->syncProducts($context);
-        $output->writeln('<info>Ürün senkronizasyonu tetiklendi.</info>');
+        $count = $this->productSyncService->syncProducts($context);
+        $output->writeln(sprintf('<info>Ürün senkronizasyonu tamamlandı. İşlenen ürün: %d</info>', $count));
 
         return Command::SUCCESS;
     }
