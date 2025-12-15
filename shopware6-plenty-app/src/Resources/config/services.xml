@@ -48,6 +48,7 @@
         <service id="PlentyConnector\Controller\AdminUtilityController" public="true">
             <argument type="service" id="Shopware\Core\Framework\Adapter\Cache\CacheClearer"/>
             <argument type="service" id="PlentyConnector\Service\ProductSyncService"/>
+            <argument type="service" id="PlentyConnector\Service\PlentyApiService"/>
         </service>
 
         <!-- Token System Entity Definitions -->
