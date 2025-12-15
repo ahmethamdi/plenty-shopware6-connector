@@ -85,15 +85,18 @@ Component.register('plenty-package-detail', {
             // Shopware repository expects an entity; on create use a fresh entity without id
             let entityToSave;
             if (this.isCreateMode) {
-                entityToSave = this.packageRepository.create(Shopware.Context.api);
-                entityToSave.name = this.package.name;
-                entityToSave.targetAmount = this.package.targetAmount;
-                entityToSave.tokenReward = this.package.tokenReward;
-                entityToSave.active = this.package.active;
-                entityToSave.visibilityType = this.package.visibilityType;
-                entityToSave.categoryIds = this.package.categoryIds;
-                entityToSave.allowedCustomerIds = this.package.allowedCustomerIds;
-                entityToSave.excludedCustomerIds = this.package.excludedCustomerIds;
+                const fresh = this.packageRepository.create(Shopware.Context.api);
+                fresh.name = this.package.name;
+                fresh.targetAmount = this.package.targetAmount;
+                fresh.tokenReward = this.package.tokenReward;
+                fresh.active = this.package.active;
+                fresh.visibilityType = this.package.visibilityType;
+                fresh.categoryIds = this.package.categoryIds || [];
+                fresh.allowedCustomerIds = this.package.allowedCustomerIds || [];
+                fresh.excludedCustomerIds = this.package.excludedCustomerIds || [];
+                // ensure DAL treats this as insert
+                fresh._isNew = true;
+                entityToSave = fresh;
             } else {
                 entityToSave = this.package;
             }
