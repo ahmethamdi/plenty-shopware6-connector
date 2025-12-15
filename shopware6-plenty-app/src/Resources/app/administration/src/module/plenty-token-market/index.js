@@ -46,6 +46,7 @@ Module.register('plenty-token-market', {
         {
             group: 'plugins',
             to: 'plenty.token.market.product-list',
+            icon: 'default-package-gift',
             label: 'plenty-token-market.general.mainMenuItemProducts',
         },
         {

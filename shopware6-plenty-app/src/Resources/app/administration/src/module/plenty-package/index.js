@@ -38,6 +38,7 @@ Module.register('plenty-package', {
         {
             group: 'plugins',
             to: 'plenty.package.list',
+            icon: 'default-shopping-paper-bag-product',
             label: 'plenty-package.general.mainMenuItemGeneral',
         },
     ],
