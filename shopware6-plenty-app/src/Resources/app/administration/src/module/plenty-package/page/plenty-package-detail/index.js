@@ -82,22 +82,24 @@ Component.register('plenty-package-detail', {
         onSave() {
             this.isLoading = true;
 
-            // In create mode, drop any preset id to avoid DAL thinking it's an update
-            if (this.isCreateMode && this.package && this.package.id) {
-                delete this.package.id;
-            }
-
             console.log('Saving package:', JSON.stringify(this.package, null, 2));
 
             return this.packageRepository.save(this.package, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
                     this.isSaveSuccessful = true;
-                    this.$router.push({ name: 'plenty.package.detail', params: { id: this.package.id } });
+                    if (this.package.id) {
+                        this.$router.push({ name: 'plenty.package.detail', params: { id: this.package.id } });
+                    } else {
+                        this.$router.push({ name: 'plenty.package.list' });
+                    }
                 })
                 .catch((error) => {
                     console.error('Save error:', error);
                     console.error('Error response:', error.response);
+                    if (error.response && error.response.data) {
+                        console.error('Error details:', error.response.data);
+                    }
                     this.isLoading = false;
                     this.createNotificationError({
                         message: this.$tc('plenty-package.detail.errorMessage'),
