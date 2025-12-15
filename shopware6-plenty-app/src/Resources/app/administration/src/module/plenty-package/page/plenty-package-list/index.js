@@ -1,6 +1,6 @@
 import template from './plenty-package-list.html.twig';
 
-const { Component, Mixin } = Shopware;
+const { Component } = Shopware;
 const { Criteria } = Shopware.Data;
 
 Component.register('plenty-package-list', {
@@ -8,15 +8,13 @@ Component.register('plenty-package-list', {
 
     inject: ['repositoryFactory'],
 
-    mixins: [
-        Mixin.getByName('listing'),
-    ],
-
     data() {
         return {
-            packages: null,
+            packages: [],
             isLoading: false,
             total: 0,
+            page: 1,
+            limit: 25,
         };
     },
 
