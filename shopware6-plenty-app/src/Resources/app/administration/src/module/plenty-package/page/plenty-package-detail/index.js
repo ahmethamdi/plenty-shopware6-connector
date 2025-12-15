@@ -84,6 +84,11 @@ Component.register('plenty-package-detail', {
 
             console.log('Saving package:', JSON.stringify(this.package, null, 2));
 
+            // In create mode, ensure entity is marked as new
+            if (this.isCreateMode && this.package.id) {
+                delete this.package.id;
+            }
+
             return this.packageRepository.save(this.package, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
