@@ -23,6 +23,7 @@ Module.register('plenty-connector-utility', {
         {
             group: 'plugins',
             to: 'plenty.connector.utility.index',
+            icon: 'default-action-settings',
             label: 'plenty-connector-utility.general.mainMenuItemGeneral',
         },
     ],
