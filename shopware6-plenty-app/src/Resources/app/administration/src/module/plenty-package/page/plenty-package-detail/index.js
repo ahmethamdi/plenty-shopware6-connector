@@ -60,7 +60,7 @@ Component.register('plenty-package-detail', {
             this.isLoading = true;
 
             if (this.isCreateMode) {
-                this.package = this.packageRepository.create();
+                this.package = this.packageRepository.create(Shopware.Context.api);
                 this.package.active = true;
                 this.package.visibilityType = 'all';
                 this.package.categoryIds = [];
