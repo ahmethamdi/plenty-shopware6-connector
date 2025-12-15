@@ -82,39 +82,32 @@ Component.register('plenty-package-detail', {
         onSave() {
             this.isLoading = true;
 
-            // Build payload explicitly and drop id in create mode to force insert
-            const payload = {
-                name: this.package.name,
-                targetAmount: this.package.targetAmount,
-                tokenReward: this.package.tokenReward,
-                active: this.package.active,
-                visibilityType: this.package.visibilityType,
-                categoryIds: this.package.categoryIds,
-                allowedCustomerIds: this.package.allowedCustomerIds,
-                excludedCustomerIds: this.package.excludedCustomerIds,
-            };
-
-            if (!this.isCreateMode && this.package.id) {
-                payload.id = this.package.id;
+            // Shopware repository expects an entity; on create use a fresh entity without id
+            let entityToSave;
+            if (this.isCreateMode) {
+                entityToSave = this.packageRepository.create(Shopware.Context.api);
+                entityToSave.name = this.package.name;
+                entityToSave.targetAmount = this.package.targetAmount;
+                entityToSave.tokenReward = this.package.tokenReward;
+                entityToSave.active = this.package.active;
+                entityToSave.visibilityType = this.package.visibilityType;
+                entityToSave.categoryIds = this.package.categoryIds;
+                entityToSave.allowedCustomerIds = this.package.allowedCustomerIds;
+                entityToSave.excludedCustomerIds = this.package.excludedCustomerIds;
+            } else {
+                entityToSave = this.package;
             }
 
-            return this.packageRepository.save(payload, Shopware.Context.api)
+            return this.packageRepository.save(entityToSave, Shopware.Context.api)
                 .then(() => {
                     this.isLoading = false;
                     this.isSaveSuccessful = true;
-                    const newId = payload.id || (this.package && this.package.id);
-                    this.$router.push(
-                        newId
-                            ? { name: 'plenty.package.detail', params: { id: newId } }
-                            : { name: 'plenty.package.list' }
-                    );
+                    const newId = entityToSave.id || (this.package && this.package.id);
+                    this.$router.push(newId
+                        ? { name: 'plenty.package.detail', params: { id: newId } }
+                        : { name: 'plenty.package.list' });
                 })
                 .catch((error) => {
-                    console.error('Save error:', error);
-                    console.error('Error response:', error.response);
-                    if (error.response && error.response.data) {
-                        console.error('Error details:', error.response.data);
-                    }
                     this.isLoading = false;
                     this.createNotificationError({
                         message: this.$tc('plenty-package.detail.errorMessage'),
